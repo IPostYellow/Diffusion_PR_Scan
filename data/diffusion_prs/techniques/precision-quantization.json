@@ -5,6 +5,7 @@
       "number": 40084,
       "repo": "vllm-project/vllm",
       "state": "open",
+      "summary_zh": "该 Draft PR 试图在 Ray 分布式执行器上为 pipeline parallel (pp>1) 打通 --async-scheduling。代码主要修改 core.py、ray_executor.py、ray_utils.py 和相关测试，引入 step_id 标记的 DAG 协议、P2P sampled-token 同步、异步 output materialization 与预取 output RPC，但描述中也明确记录了长输入和 rate-limited 场景下的已知退化问题。",
       "title": "[WIP][Draft]Ray async scheduling with pp",
       "updated_at": "2026-04-17T02:18:15Z",
       "url": "https://github.com/vllm-project/vllm/pull/40084"
@@ -14,6 +15,7 @@
       "number": 32415,
       "repo": "vllm-project/vllm",
       "state": "open",
+      "summary_zh": "该 PR 修复 Tensor Parallel 加 routed-expert return 场景下的缓冲区 sizing 和内存处理问题。代码主要修改 routed_experts_capturer.py、scheduler.py、gpu_model_runner.py 及对应测试，引入 /dev/shm 检测与 mmap 回退、按 num_gpu_blocks 定尺寸、增长式扩容、异步 D2H 拷贝和更窄 buffer dtype。",
       "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
       "updated_at": "2026-04-17T02:15:47Z",
       "url": "https://github.com/vllm-project/vllm/pull/32415"
@@ -23,6 +25,7 @@
       "number": 21758,
       "repo": "sgl-project/sglang",
       "state": "closed",
+      "summary_zh": "该 PR 为 Ascend NPU 的 multi-item scoring 增加专项测试。改动主要落在 python/sglang/test/ascend/ 与 NPU CI workflow，覆盖 raw logits 与 softmax 两种返回模式、语义排序验证以及公共测试辅助逻辑。",
       "title": "multi-item scoring test",
       "updated_at": "2026-04-17T02:14:41Z",
       "url": "https://github.com/sgl-project/sglang/pull/21758"

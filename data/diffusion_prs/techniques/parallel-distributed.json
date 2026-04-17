@@ -5,6 +5,7 @@
       "number": 40084,
       "repo": "vllm-project/vllm",
       "state": "open",
+      "summary_zh": "该 Draft PR 试图在 Ray 分布式执行器上为 pipeline parallel (pp>1) 打通 --async-scheduling。代码主要修改 core.py、ray_executor.py、ray_utils.py 和相关测试，引入 step_id 标记的 DAG 协议、P2P sampled-token 同步、异步 output materialization 与预取 output RPC，但描述中也明确记录了长输入和 rate-limited 场景下的已知退化问题。",
       "title": "[WIP][Draft]Ray async scheduling with pp",
       "updated_at": "2026-04-17T02:18:15Z",
       "url": "https://github.com/vllm-project/vllm/pull/40084"
@@ -14,6 +15,7 @@
       "number": 32415,
       "repo": "vllm-project/vllm",
       "state": "open",
+      "summary_zh": "该 PR 修复 Tensor Parallel 加 routed-expert return 场景下的缓冲区 sizing 和内存处理问题。代码主要修改 routed_experts_capturer.py、scheduler.py、gpu_model_runner.py 及对应测试，引入 /dev/shm 检测与 mmap 回退、按 num_gpu_blocks 定尺寸、增长式扩容、异步 D2H 拷贝和更窄 buffer dtype。",
       "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
       "updated_at": "2026-04-17T02:15:47Z",
       "url": "https://github.com/vllm-project/vllm/pull/32415"
@@ -23,6 +25,7 @@
       "number": 32476,
       "repo": "vllm-project/vllm",
       "state": "open",
+      "summary_zh": "该 PR 只改注释，不改行为。代码在 offloading_connector.py 中把“可以加载少于一个 block”改成“不能加载 partial offloaded blocks”，明确当前 offloading 逻辑只支持 block 粒度加载。",
       "title": "[Doc] Clarify comment regarding partial block loading",
       "updated_at": "2026-04-17T02:15:39Z",
       "url": "https://github.com/vllm-project/vllm/pull/32476"
@@ -32,6 +35,7 @@
       "number": 21761,
       "repo": "sgl-project/sglang",
       "state": "closed",
+      "summary_zh": "该 PR 为 Ascend NPU 的 dynamic batch tokenizer 增加完整测试矩阵。代码集中在 python/sglang/test/ascend/ 与 NPU CI workflow，新增并发、batch size、timeout、sampling、TP/DP 等 13 个用例，用于验证不同 batch_wait_timeout 和并行模式下的行为。",
       "title": "dynamic batch tokenizer testcases",
       "updated_at": "2026-04-17T02:14:31Z",
       "url": "https://github.com/sgl-project/sglang/pull/21761"
@@ -41,6 +45,7 @@
       "number": 22015,
       "repo": "sgl-project/sglang",
       "state": "closed",
+      "summary_zh": "该 PR 为 Ascend NPU 上的 VLM encoder-prefill disaggregation 补充测试。主要新增 test_npu_adaptive_dispatch_to_encoder.py 与 test_npu_disaggregated_vlm.py，覆盖 --encoder-only、--language-only、transfer backend 和 adaptive dispatch 等多进程参数组合。",
       "title": "EPD test",
       "updated_at": "2026-04-17T02:14:21Z",
       "url": "https://github.com/sgl-project/sglang/pull/22015"
@@ -50,6 +55,7 @@
       "number": 22998,
       "repo": "sgl-project/sglang",
       "state": "open",
+      "summary_zh": "该 PR 调整权重更新 flush 路径，默认跳过 torch.cuda.empty_cache() 以减少并发推理时的 CUDA 同步开销。代码主要修改 scheduler.py、scheduler_update_weights_mixin.py 和 io_struct.py，统一多个 UpdateWeights 请求结构里的 torch_empty_cache 开关，同时保留 KV cache pool flush。",
       "title": "Skip torch.cuda.empty_cache() in weight update flush path",
       "updated_at": "2026-04-17T01:54:09Z",
       "url": "https://github.com/sgl-project/sglang/pull/22998"
