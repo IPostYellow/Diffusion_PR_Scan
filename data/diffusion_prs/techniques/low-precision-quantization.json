@@ -1,0 +1,45 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "low-precision-quantization",
+    "label_zh": "FP8/NVFP4/量化",
+    "count": 3,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 21912,
+        "title": "[diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph ",
+        "url": "https://github.com/sgl-project/sglang/pull/21912",
+        "status_zh": "open",
+        "updated_at": "2026-04-02T16:16:32Z",
+        "summary_zh": "给 Z-Image-Turbo 做完整 FP8 量化（attention+FFN）并接入 whole/step-level CUDA Graph，顺带修复 FFN FP8 scale 丢失等加载问题。组合目标是同时压缩 GEMM 成本和 host 发射开销。",
+        "evidence_zh": "H20 上 1024x1024 的 E2E 3607.24ms->1837.81ms；512x512 为 923.06ms->504.06ms。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 20319,
+        "title": "[AMD] Support fp8 MHA for diffusion model",
+        "url": "https://github.com/sgl-project/sglang/pull/20319",
+        "status_zh": "open",
+        "updated_at": "2026-03-31T06:12:14Z",
+        "summary_zh": "将 AMD diffusion attention 的 FP8 per-tensor flash attention 替换成 MLA prefill ASM kernel，并在不满足 tile 约束时回退到 BF16。收益集中在 Wan2.2 的 attention 热点。",
+        "evidence_zh": "MI355X 上 81 帧总时长 442.17s->357.75s，161 帧总时长 1426.08s->1175.45s。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 20361,
+        "title": "[Diffusion] Bump up cache-dit & support quant for diffusers backend",
+        "url": "https://github.com/sgl-project/sglang/pull/20361",
+        "status_zh": "merged",
+        "updated_at": "2026-03-17T11:57:16Z",
+        "summary_zh": "升级 cache-dit 集成，让 diffusers backend 能直接加载更完整的 cache、parallel 与 FP8 配置。它的本质是把 cache-dit 的优化能力完整打通到 SGLang diffusion。",
+        "evidence_zh": "FLUX.1-dev 在 L20 上 20.46s->13.81s，在 H200 上 3.73s->2.77s。"
+      }
+    ]
+  }
+}

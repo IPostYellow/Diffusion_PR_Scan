@@ -1,0 +1,55 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "kernel-fusion",
+    "label_zh": "内核融合/算子快路径",
+    "count": 4,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 22814,
+        "title": "diffusion: add HunyuanVideo GroupNorm+SiLU fast path",
+        "url": "https://github.com/sgl-project/sglang/pull/22814",
+        "status_zh": "open",
+        "updated_at": "2026-04-17T01:24:02Z",
+        "summary_zh": "为 `HunyuanVideoResnetBlockCausal3D` 增加 Triton GroupNorm+SiLU 快路径，减少 3D ResNet 块中的归一化与激活开销。优化主要落在 decoding 阶段。",
+        "evidence_zh": "H100 上总时延 57.23s->56.45s，DecodingStage 15.51s->14.55s。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 22786,
+        "title": "[AMD][diffusion] Add FlyDSL fused normalization kernels for ROCm diffusion models optimization",
+        "url": "https://github.com/sgl-project/sglang/pull/22786",
+        "status_zh": "open",
+        "updated_at": "2026-04-16T16:08:26Z",
+        "summary_zh": "在 ROCm diffusion 路径里引入 FlyDSL 融合归一化、scale/shift 和 GeLU 快路径，并保留 shape、dtype、import 三类回退逻辑。核心目标是压缩 denoising 热路径上的 norm/modulation kernel 数量。",
+        "evidence_zh": "Wan2.2 T2V 在 MI355X 上无 compile 总时延 143.41s->138.70s；compile 场景 131.60s->129.28s，denoising 子阶段改善更明显。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 22445,
+        "title": "[NPU] [Diffusion] Performance Optimization for LTX-2 Model",
+        "url": "https://github.com/sgl-project/sglang/pull/22445",
+        "status_zh": "open",
+        "updated_at": "2026-04-15T03:48:27Z",
+        "summary_zh": "给 LTX-2 换成 custom RMSNorm 与 NPU 融合 RMSNorm，并在全 1 mask 情况下绕过低效 attention 路径。收益主要来自归一化与 attention 前处理热路径的收缩。",
+        "evidence_zh": "E2E 在 NPU 上 102.74s->75.69s，在 GPU 上 136.62s->131.70s。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19632,
+        "title": "[Perf] Reduce DiT kernel launch overhead with fused CUDA kernels for FLUX/Z-Image",
+        "url": "https://github.com/sgl-project/sglang/pull/19632",
+        "status_zh": "closed-unmerged",
+        "updated_at": "2026-03-02T03:06:02Z",
+        "summary_zh": "在 FLUX/FLUX.2/Z-Image 的 DiT 热路径里引入融合 residual+norm+modulation、QK norm 与 gated residual kernel，目标是减少 kernel launch 与内存带宽开销。",
+        "evidence_zh": "4-step 1024x1024 benchmark 里 DenoisingStage 0.7028s->0.6913s；作者预计标准 20-50 步场景收益会更明显。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "torch-compile",
+    "label_zh": "torch.compile 编译",
+    "count": 2,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 21417,
+        "title": "[Diffusion] Change default torch.compile mode from max-autotune to default",
+        "url": "https://github.com/sgl-project/sglang/pull/21417",
+        "status_zh": "open",
+        "updated_at": "2026-03-26T22:22:32Z",
+        "summary_zh": "把 diffusion 默认 `torch.compile` mode 从 `max-autotune-no-cudagraphs` 改成 `default`，修复“开 compile 反而更慢”的运行时策略问题。它不是新增算子，而是 compile policy 调优。",
+        "evidence_zh": "作者给出 Qwen/Flux.2 测试，说明旧默认模式会导致 1.47-1.68x denoising regression，而新默认模式能改善 text encoding 与 VAE decode。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19673,
+        "title": "[diffusion] support torch compile for diffusers backend",
+        "url": "https://github.com/sgl-project/sglang/pull/19673",
+        "status_zh": "merged",
+        "updated_at": "2026-03-04T06:17:46Z",
+        "summary_zh": "让 diffusers backend 也能安全启用 `torch.compile`，并补上 `warmup_steps` 来配合 cache-dit。它把 compile 收益从自研 backend 扩展到了 diffusers 路径。",
+        "evidence_zh": "FLUX.1-dev 在 L20 上 23.6s->20.3s；与 cache 叠加后到 12.8s。"
+      }
+    ]
+  }
+}

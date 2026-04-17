@@ -1,0 +1,25 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "communication",
+    "label_zh": "通信优化",
+    "count": 1,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 22805,
+        "title": "[diffusion] comms: Pack QKV for a2a in Flux2",
+        "url": "https://github.com/sgl-project/sglang/pull/22805",
+        "status_zh": "open",
+        "updated_at": "2026-04-14T13:12:36Z",
+        "summary_zh": "在 Flux2 的 USP attention 中把 Q/K/V 三次 all-to-all 合并成一次打包通信，减少多 GPU 通信调用和拆分开销。收益集中在 denoising 通信热段。",
+        "evidence_zh": "8xB200 与 8xMI355X 的 1024/2048 分辨率测试中，DenoisingStage 约下降 0.7%-2.0%，总体延迟下降约 0.5%-1.8%。"
+      }
+    ]
+  }
+}

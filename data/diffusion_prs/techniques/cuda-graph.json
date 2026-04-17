@@ -1,0 +1,45 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "cuda-graph",
+    "label_zh": "CUDA Graph 图捕获",
+    "count": 3,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19876,
+        "title": "[Diffusion] Diffusion support cuda graph",
+        "url": "https://github.com/sgl-project/sglang/pull/19876",
+        "status_zh": "closed-unmerged",
+        "updated_at": "2026-04-17T01:00:22Z",
+        "summary_zh": "把 CUDA Graph 预捕获扩展到通用 diffusion/FLUX 路径，通过预捕获 CFG positive graph 减少 kernel 间空洞。优化很直接，主要作用在 denoising 的 host launch 开销。",
+        "evidence_zh": "FLUX.1-dev 50 步里单步 0.1495s->0.1449s，Pixel data 总时长 17.61s->15.02s。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 21912,
+        "title": "[diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph ",
+        "url": "https://github.com/sgl-project/sglang/pull/21912",
+        "status_zh": "open",
+        "updated_at": "2026-04-02T16:16:32Z",
+        "summary_zh": "给 Z-Image-Turbo 做完整 FP8 量化（attention+FFN）并接入 whole/step-level CUDA Graph，顺带修复 FFN FP8 scale 丢失等加载问题。组合目标是同时压缩 GEMM 成本和 host 发射开销。",
+        "evidence_zh": "H20 上 1024x1024 的 E2E 3607.24ms->1837.81ms；512x512 为 923.06ms->504.06ms。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19516,
+        "title": "[Diffusion] add cuda graph support for Qwen-Image",
+        "url": "https://github.com/sgl-project/sglang/pull/19516",
+        "status_zh": "open",
+        "updated_at": "2026-03-18T01:23:17Z",
+        "summary_zh": "针对 Qwen-Image 里约 30% 的 CPU launch overhead，按 txt/img 子路径拆分并捕获 CUDA Graph，尽量只对 prompt 维做 padding。PR 的重点是消除 host launch gap，而不是改模型算法。",
+        "evidence_zh": "给出了 profile 与输出一致性验证；属于 profile-based 的性能 PR。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "memory-efficiency",
+    "label_zh": "显存效率",
+    "count": 2,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 22183,
+        "title": "[Diffusion] Sequential Per-Output Execution for Multi-Output Diffusion Generation",
+        "url": "https://github.com/sgl-project/sglang/pull/22183",
+        "status_zh": "open",
+        "updated_at": "2026-04-12T15:01:24Z",
+        "summary_zh": "把 `num_outputs_per_prompt` 从 denoising 内部大 batch 改成执行器层的 sequential per-output，解决多输出时 OOM 和模型不兼容问题。这个 PR 主要优化的是显存占用而非单次速度。",
+        "evidence_zh": "4 输出 FLUX 测试里 DiT 时间基本持平，但峰值显存 57.10GB->32.04GB。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 21573,
+        "title": "Add persistent diffusion workspace reuse and extend random benchmarks for image-conditioned tasks",
+        "url": "https://github.com/sgl-project/sglang/pull/21573",
+        "status_zh": "open",
+        "updated_at": "2026-04-01T23:41:03Z",
+        "summary_zh": "在多个 diffusion denoising loop 里复用 persistent workspace，避免每步重复分配临时 buffer。它属于低风险的 allocator/temporary tensor 开销优化。",
+        "evidence_zh": "H200 单卡测试里，Wan DMD、Flux.2 与 Helios 都有小幅平均延迟或 P99 改善，并在部分模型上略降峰值显存。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "attention-backend",
+    "label_zh": "注意力后端/精度调度",
+    "count": 2,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 21742,
+        "title": "[diffusion] attention: add support for hybrid attention schedule",
+        "url": "https://github.com/sgl-project/sglang/pull/21742",
+        "status_zh": "open",
+        "updated_at": "2026-04-08T08:07:26Z",
+        "summary_zh": "引入 hybrid attention schedule，在扩散前后若干步使用高精后端，中间步切到更快的低精后端，以降低 artifacts 同时保留大部分性能收益。",
+        "evidence_zh": "Wan2.2 T2V 上，相比纯 AITER 基线，hybrid 调度的 DenoisingStage 下降约 11.5%。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 20319,
+        "title": "[AMD] Support fp8 MHA for diffusion model",
+        "url": "https://github.com/sgl-project/sglang/pull/20319",
+        "status_zh": "open",
+        "updated_at": "2026-03-31T06:12:14Z",
+        "summary_zh": "将 AMD diffusion attention 的 FP8 per-tensor flash attention 替换成 MLA prefill ASM kernel，并在不满足 tile 约束时回退到 BF16。收益集中在 Wan2.2 的 attention 热点。",
+        "evidence_zh": "MI355X 上 81 帧总时长 442.17s->357.75s，161 帧总时长 1426.08s->1175.45s。"
+      }
+    ]
+  }
+}

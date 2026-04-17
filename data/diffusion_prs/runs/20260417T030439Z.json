@@ -1,0 +1,229 @@
+{
+  "run_id": "20260417T030439Z",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "mode": "manual_strict_rebuild",
+  "strict_filter_version": "strict-v1",
+  "repos_scanned": [
+    "sgl-project/sglang",
+    "vllm-project/vllm"
+  ],
+  "matched_pr_count": 19,
+  "repos_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category_counts": {
+    "kernel-fusion": 4,
+    "execution-batching": 1,
+    "cuda-graph": 3,
+    "memory-offload": 1,
+    "scheduling-throughput": 1,
+    "communication": 1,
+    "memory-efficiency": 2,
+    "cache-reuse": 3,
+    "attention-backend": 2,
+    "low-precision-quantization": 3,
+    "torch-compile": 2
+  },
+  "notes_zh": [
+    "本次为清库后的严格重建，旧的宽松筛选结果已全部丢弃。",
+    "vllm-project/vllm 在当前严格规则下没有命中项。",
+    "分类只保留对性能路径有直接解释力的标签，不再保留 quality-ci 这类宽泛桶。"
+  ],
+  "items": [
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22814,
+      "title": "diffusion: add HunyuanVideo GroupNorm+SiLU fast path",
+      "status_zh": "open",
+      "techniques": [
+        "kernel-fusion"
+      ],
+      "summary_zh": "为 `HunyuanVideoResnetBlockCausal3D` 增加 Triton GroupNorm+SiLU 快路径，减少 3D ResNet 块中的归一化与激活开销。优化主要落在 decoding 阶段。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 20434,
+      "title": "[diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead",
+      "status_zh": "closed-unmerged",
+      "techniques": [
+        "execution-batching"
+      ],
+      "summary_zh": "把 Qwen-Image 串行 CFG 的 cond/uncond 两次 transformer forward 合并成一次 batched forward，再按原公式合成 guidance。算法不变，主要减少每步框架与 launch 开销。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 19876,
+      "title": "[Diffusion] Diffusion support cuda graph",
+      "status_zh": "closed-unmerged",
+      "techniques": [
+        "cuda-graph"
+      ],
+      "summary_zh": "把 CUDA Graph 预捕获扩展到通用 diffusion/FLUX 路径，通过预捕获 CFG positive graph 减少 kernel 间空洞。优化很直接，主要作用在 denoising 的 host launch 开销。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22869,
+      "title": "[diffusion] optimize ltx-2.3 offload hot paths",
+      "status_zh": "open",
+      "techniques": [
+        "memory-offload"
+      ],
+      "summary_zh": "围绕 LTX-2.3 两阶段管线，减少 DiT/VAE 的 CPU offload 和请求期 `module.to(cpu/cuda)` 切换，新增 snapshot/resident 模式与预合并 stage-2 transformer。重点是把权重搬运和 LoRA 切换的同步开销从请求路径里移走。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22786,
+      "title": "[AMD][diffusion] Add FlyDSL fused normalization kernels for ROCm diffusion models optimization",
+      "status_zh": "open",
+      "techniques": [
+        "kernel-fusion"
+      ],
+      "summary_zh": "在 ROCm diffusion 路径里引入 FlyDSL 融合归一化、scale/shift 和 GeLU 快路径，并保留 shape、dtype、import 三类回退逻辑。核心目标是压缩 denoising 热路径上的 norm/modulation kernel 数量。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22445,
+      "title": "[NPU] [Diffusion] Performance Optimization for LTX-2 Model",
+      "status_zh": "open",
+      "techniques": [
+        "kernel-fusion"
+      ],
+      "summary_zh": "给 LTX-2 换成 custom RMSNorm 与 NPU 融合 RMSNorm，并在全 1 mask 情况下绕过低效 attention 路径。收益主要来自归一化与 attention 前处理热路径的收缩。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 18764,
+      "title": "[diffusion] Add dynamic batching v0",
+      "status_zh": "open",
+      "techniques": [
+        "scheduling-throughput"
+      ],
+      "summary_zh": "给 diffusion scheduler 增加动态 batching（max batch size + delay），在不改模型算法的前提下提高 serving 吞吐并压低尾延迟。适用范围目前是 prompt-only 的 t2i/t2v。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22805,
+      "title": "[diffusion] comms: Pack QKV for a2a in Flux2",
+      "status_zh": "open",
+      "techniques": [
+        "communication"
+      ],
+      "summary_zh": "在 Flux2 的 USP attention 中把 Q/K/V 三次 all-to-all 合并成一次打包通信，减少多 GPU 通信调用和拆分开销。收益集中在 denoising 通信热段。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22183,
+      "title": "[Diffusion] Sequential Per-Output Execution for Multi-Output Diffusion Generation",
+      "status_zh": "open",
+      "techniques": [
+        "memory-efficiency"
+      ],
+      "summary_zh": "把 `num_outputs_per_prompt` 从 denoising 内部大 batch 改成执行器层的 sequential per-output，解决多输出时 OOM 和模型不兼容问题。这个 PR 主要优化的是显存占用而非单次速度。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22441,
+      "title": "[diffusion] Cache LTX-2 RoPE coords to avoid per-step recompute",
+      "status_zh": "open",
+      "techniques": [
+        "cache-reuse"
+      ],
+      "summary_zh": "对 LTX-2 音视频 denoising 阶段中每步重复构造的 video/audio RoPE 坐标做 LRU 缓存，把与分辨率、帧数相关但跨步不变的准备工作移出循环。属于典型的 per-step 常量复用优化。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 21742,
+      "title": "[diffusion] attention: add support for hybrid attention schedule",
+      "status_zh": "open",
+      "techniques": [
+        "attention-backend"
+      ],
+      "summary_zh": "引入 hybrid attention schedule，在扩散前后若干步使用高精后端，中间步切到更快的低精后端，以降低 artifacts 同时保留大部分性能收益。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 21912,
+      "title": "[diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph ",
+      "status_zh": "open",
+      "techniques": [
+        "low-precision-quantization",
+        "cuda-graph"
+      ],
+      "summary_zh": "给 Z-Image-Turbo 做完整 FP8 量化（attention+FFN）并接入 whole/step-level CUDA Graph，顺带修复 FFN FP8 scale 丢失等加载问题。组合目标是同时压缩 GEMM 成本和 host 发射开销。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 21573,
+      "title": "Add persistent diffusion workspace reuse and extend random benchmarks for image-conditioned tasks",
+      "status_zh": "open",
+      "techniques": [
+        "cache-reuse",
+        "memory-efficiency"
+      ],
+      "summary_zh": "在多个 diffusion denoising loop 里复用 persistent workspace，避免每步重复分配临时 buffer。它属于低风险的 allocator/temporary tensor 开销优化。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 20319,
+      "title": "[AMD] Support fp8 MHA for diffusion model",
+      "status_zh": "open",
+      "techniques": [
+        "attention-backend",
+        "low-precision-quantization"
+      ],
+      "summary_zh": "将 AMD diffusion attention 的 FP8 per-tensor flash attention 替换成 MLA prefill ASM kernel，并在不满足 tile 约束时回退到 BF16。收益集中在 Wan2.2 的 attention 热点。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 21417,
+      "title": "[Diffusion] Change default torch.compile mode from max-autotune to default",
+      "status_zh": "open",
+      "techniques": [
+        "torch-compile"
+      ],
+      "summary_zh": "把 diffusion 默认 `torch.compile` mode 从 `max-autotune-no-cudagraphs` 改成 `default`，修复“开 compile 反而更慢”的运行时策略问题。它不是新增算子，而是 compile policy 调优。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 19516,
+      "title": "[Diffusion] add cuda graph support for Qwen-Image",
+      "status_zh": "open",
+      "techniques": [
+        "cuda-graph"
+      ],
+      "summary_zh": "针对 Qwen-Image 里约 30% 的 CPU launch overhead，按 txt/img 子路径拆分并捕获 CUDA Graph，尽量只对 prompt 维做 padding。PR 的重点是消除 host launch gap，而不是改模型算法。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 20361,
+      "title": "[Diffusion] Bump up cache-dit & support quant for diffusers backend",
+      "status_zh": "merged",
+      "techniques": [
+        "cache-reuse",
+        "low-precision-quantization"
+      ],
+      "summary_zh": "升级 cache-dit 集成，让 diffusers backend 能直接加载更完整的 cache、parallel 与 FP8 配置。它的本质是把 cache-dit 的优化能力完整打通到 SGLang diffusion。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 19673,
+      "title": "[diffusion] support torch compile for diffusers backend",
+      "status_zh": "merged",
+      "techniques": [
+        "torch-compile"
+      ],
+      "summary_zh": "让 diffusers backend 也能安全启用 `torch.compile`，并补上 `warmup_steps` 来配合 cache-dit。它把 compile 收益从自研 backend 扩展到了 diffusers 路径。"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 19632,
+      "title": "[Perf] Reduce DiT kernel launch overhead with fused CUDA kernels for FLUX/Z-Image",
+      "status_zh": "closed-unmerged",
+      "techniques": [
+        "kernel-fusion"
+      ],
+      "summary_zh": "在 FLUX/FLUX.2/Z-Image 的 DiT 热路径里引入融合 residual+norm+modulation、QK norm 与 gated residual kernel，目标是减少 kernel launch 与内存带宽开销。"
+    }
+  ]
+}

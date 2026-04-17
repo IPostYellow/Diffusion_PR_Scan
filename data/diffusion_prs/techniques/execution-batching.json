@@ -1,0 +1,25 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "execution-batching",
+    "label_zh": "执行批处理/前向合批",
+    "count": 1,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 20434,
+        "title": "[diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead",
+        "url": "https://github.com/sgl-project/sglang/pull/20434",
+        "status_zh": "closed-unmerged",
+        "updated_at": "2026-04-17T01:00:23Z",
+        "summary_zh": "把 Qwen-Image 串行 CFG 的 cond/uncond 两次 transformer forward 合并成一次 batched forward，再按原公式合成 guidance。算法不变，主要减少每步框架与 launch 开销。",
+        "evidence_zh": "50 步 denoising 的单步时间 0.3052s->0.2553s，总 denoising 15.2640s->12.7667s。"
+      }
+    ]
+  }
+}

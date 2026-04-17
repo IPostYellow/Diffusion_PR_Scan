@@ -1,10 +1,15 @@
 {
-  "cursor_utc": "2026-04-17T02:21:25Z",
-  "last_run_id": "20260417T022125Z",
-  "last_stats": {
-    "delta_added": 13,
-    "delta_updated": 0,
-    "matched_diffusion_prs": 13,
-    "scanned_pr_candidates": 40
-  }
+  "last_scan_utc": "2026-04-17T03:04:39Z",
+  "strict_filter_version": "strict-v1",
+  "mode": "manual_strict_rebuild",
+  "repos": [
+    "sgl-project/sglang",
+    "vllm-project/vllm"
+  ],
+  "matched_pr_count": 19,
+  "repos_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "notes_zh": "仓库已按严格规则重建；后续增量扫描应以该版本规则为准。"
 }

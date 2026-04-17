@@ -1,0 +1,25 @@
+{
+  "strict_filter_version": "strict-v1",
+  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "repo_summary": {
+    "sgl-project/sglang": 19,
+    "vllm-project/vllm": 0
+  },
+  "category": {
+    "slug": "scheduling-throughput",
+    "label_zh": "调度/吞吐优化",
+    "count": 1,
+    "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 18764,
+        "title": "[diffusion] Add dynamic batching v0",
+        "url": "https://github.com/sgl-project/sglang/pull/18764",
+        "status_zh": "open",
+        "updated_at": "2026-04-15T01:47:51Z",
+        "summary_zh": "给 diffusion scheduler 增加动态 batching（max batch size + delay），在不改模型算法的前提下提高 serving 吞吐并压低尾延迟。适用范围目前是 prompt-only 的 t2i/t2v。",
+        "evidence_zh": "H100 上 Qwen-Image 吞吐 +29.6%，mean latency -22.4%，P99 -31.8%。"
+      }
+    ]
+  }
+}
