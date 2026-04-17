@@ -1,6 +1,6 @@
 {
   "strict_filter_version": "strict-v3",
-  "generated_at_utc": "2026-04-17T07:26:25Z",
+  "generated_at_utc": "2026-04-17T08:02:34Z",
   "repo_summary": {
     "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
@@ -17,8 +17,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/22869",
         "status_zh": "open",
         "updated_at": "2026-04-17T06:05:46Z",
-        "summary_zh": "优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。",
-        "evidence_zh": "2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)"
+        "summary_zh": "在 LTX-2.3 路径引入 FP8 或量化配置，降低 GEMM 或 attention 计算成本。 主要改动涉及 ltx_2_pipeline.py, server_args.py。",
+        "evidence_zh": "3. apply lora (~18.5s)"
       },
       {
         "repo": "sgl-project/sglang",
@@ -27,8 +27,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/18764",
         "status_zh": "open",
         "updated_at": "2026-04-15T01:47:51Z",
-        "summary_zh": "为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。",
-        "evidence_zh": "Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P；| Model | Throughpu"
+        "summary_zh": "重排 Z-Image 的 offload 或 resident 策略，把权重搬运和设备切换尽量移出请求热路径。 主要改动涉及 scheduler.py, sampling_params.py。",
+        "evidence_zh": "+29.6%；-22.4%"
       },
       {
         "repo": "sgl-project/sglang",
@@ -37,7 +37,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/22805",
         "status_zh": "open",
         "updated_at": "2026-04-14T13:12:36Z",
-        "summary_zh": "将 FLUX.2 USP 中 Q/K/V 的三次独立 all-to-all 通信合并为一次 pack 后的单次 all-to-all，DenoisingStage 延迟降低约 2.0%。",
+        "summary_zh": "优化 FLUX.2 的多卡通信路径，减少 all-to-all 或 collective 调用带来的同步开销。 主要改动涉及 usp.py, layer.py。",
         "evidence_zh": "| **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ |；| DenoisingStage | 4523.43 | 4432.28 | -91.15 | -2.0% | ⚪️ |"
       },
       {
@@ -47,7 +47,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/22183",
         "status_zh": "open",
         "updated_at": "2026-04-12T15:01:24Z",
-        "summary_zh": "将多输出 diffusion 生成从全量 batch 改为逐输出顺序执行，峰值显存从 57GB 降至 32GB（降幅 43.9%），DiT 时间几乎不变。",
+        "summary_zh": "调整 Qwen-Image 的执行方式以压低峰值显存，缓解多输出或大 batch 场景下的 OOM 风险。 主要改动涉及 pipeline_executor.py, parallel_executor.py。",
         "evidence_zh": "| DiT time | 15.2041 s | 15.4286 s | +1.4% |；| Peak GPU memory | 57,104 MB | **32,042 MB** | **↓ 43.9%** |"
       }
     ]

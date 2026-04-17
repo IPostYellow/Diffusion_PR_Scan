@@ -1,6 +1,6 @@
 {
   "strict_filter_version": "strict-v3",
-  "generated_at_utc": "2026-04-17T07:26:25Z",
+  "generated_at_utc": "2026-04-17T08:02:34Z",
   "repo_summary": {
     "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
@@ -12,23 +12,23 @@
     "prs": [
       {
         "repo": "sgl-project/sglang",
-        "number": 23025,
-        "title": "Optimize LTX2 modulation and two-stage warmup",
-        "url": "https://github.com/sgl-project/sglang/pull/23025",
-        "status_zh": "open",
-        "updated_at": "2026-04-17T07:19:21Z",
-        "summary_zh": "在 LTX-2.3 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 ltx_2.py, lora_pipeline.py。",
-        "evidence_zh": "Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.；| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% "
-      },
-      {
-        "repo": "sgl-project/sglang",
         "number": 20816,
         "title": "[Diffusion][CPU] Init CPU platform support for SGLang Diffusion",
         "url": "https://github.com/sgl-project/sglang/pull/20816",
         "status_zh": "open",
-        "updated_at": "2026-04-17T07:16:41Z",
+        "updated_at": "2026-04-17T07:54:15Z",
         "summary_zh": "在 Z-Image 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 cpu_worker.py, mps_fallback.py。",
         "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 23025,
+        "title": "Optimize LTX2 modulation and two-stage warmup",
+        "url": "https://github.com/sgl-project/sglang/pull/23025",
+        "status_zh": "open",
+        "updated_at": "2026-04-17T07:41:57Z",
+        "summary_zh": "在 LTX-2.3 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 ltx_2.py, lora_pipeline.py。",
+        "evidence_zh": "| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% |"
       },
       {
         "repo": "sgl-project/sglang",
@@ -37,8 +37,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/22814",
         "status_zh": "open",
         "updated_at": "2026-04-17T01:24:02Z",
-        "summary_zh": "为 HunyuanVideo 的 ResnetBlock 引入 Triton GroupNorm+SiLU 融合 kernel fast path，DecodingStage 延迟降低约 6.2%。",
-        "evidence_zh": "`DenoisingStage`: `41406.19 -> 41582.68 ms` (`+0.4%`)；`DecodingStage`: `15514.60 -> 14548.95 ms` (`-6.2%`)"
+        "summary_zh": "在 HunyuanVideo 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 group_norm_silu.py, test_group_norm_silu.py。",
+        "evidence_zh": "41406.19 -> 41582.68 ms；15514.60 -> 14548.95 ms"
       },
       {
         "repo": "sgl-project/sglang",
@@ -47,7 +47,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/22445",
         "status_zh": "open",
         "updated_at": "2026-04-15T03:48:27Z",
-        "summary_zh": "替换 LTX-2 中 torch.nn.RMSNorm 为自定义融合算子并集成 fused_rmsnorm，NPU 上 E2E 延迟降低约 27%，GPU 上降低约 3%。",
+        "summary_zh": "在 LTX-2 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 ltx_2.py。",
         "evidence_zh": "This PR reduces E2E latency by approximately 27% on NPU and 3% on GPU.；E2E before the pr: 102.74s"
       },
       {
@@ -57,7 +57,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/22441",
         "status_zh": "open",
         "updated_at": "2026-04-12T14:44:54Z",
-        "summary_zh": "为 LTX-2 denoising 循环引入 RoPE 坐标 LRU 缓存，避免每步重复构造 video/audio coords，减少重复计算开销。",
+        "summary_zh": "在 LTX-2 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 denoising_av.py。",
         "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。"
       },
       {
@@ -67,7 +67,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/21912",
         "status_zh": "open",
         "updated_at": "2026-04-02T16:16:32Z",
-        "summary_zh": "为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。",
+        "summary_zh": "为 Z-Image 路径接入 CUDA Graph，重点减少 denoising 过程中的 host launch gap 和 step 间空洞。 主要改动涉及 diffusion_cuda_graph_runner.py, convert_zimage_hf_to_fp8.py。",
         "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。"
       },
       {
@@ -77,7 +77,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/19632",
         "status_zh": "closed-unmerged",
         "updated_at": "2026-03-02T03:06:02Z",
-        "summary_zh": "通过融合 CUDA kernel 减少 FLUX/Z-Image DiT denoising 循环中的 kernel launch 次数，Denoising Stage 总时间降低约 1.64%。",
+        "summary_zh": "在 Z-Image 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 flux.py, reproduce.md。",
         "evidence_zh": "| **Denoising Stage Total** | 0.7028s | 0.6913s | **1.64%** |；| **Average Time Per Step** | 0.1751s | 0.1721s | **1.71%** |"
       }
     ]

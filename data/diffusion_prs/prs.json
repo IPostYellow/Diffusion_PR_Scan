@@ -1,6 +1,6 @@
 {
   "strict_filter_version": "strict-v3",
-  "generated_at_utc": "2026-04-17T07:26:25Z",
+  "generated_at_utc": "2026-04-17T08:02:34Z",
   "scan_scope": {
     "repos_scanned": [
       "sgl-project/sglang",
@@ -23,114 +23,6 @@
   },
   "items": [
     {
-      "id": "sgl-project/sglang#23025",
-      "repo": "sgl-project/sglang",
-      "number": 23025,
-      "title": "Optimize LTX2 modulation and two-stage warmup",
-      "url": "https://github.com/sgl-project/sglang/pull/23025",
-      "author": "BBuf",
-      "state": "open",
-      "merged": false,
-      "draft": false,
-      "created_at": "2026-04-17T03:45:18Z",
-      "updated_at": "2026-04-17T07:19:21Z",
-      "closed_at": null,
-      "merged_at": null,
-      "labels": [
-        "diffusion",
-        "lora"
-      ],
-      "body_excerpt": "Summary fuse LTX2 per-block RMSNorm + scale/shift modulation with the existing CuTeDSL fused norm kernel fuse LTX2 residual + gate and standalone scale/shift modulation with the existing Triton scale-shift kernel make the LTX-2.3 one-stage and two-stage benchmark presets explicitly include `--warmup` and avoid duplicate warmup flags Benchmark Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`. Command shape: ```bash CUDA_VISIBLE_DEVICES=0,1 PYTHONPATH=python FLASHINFER_DISABLE_VERSION_CHECK=1 \\ sglang generate \\ -model-path Lightricks/LTX-2.3 \\ -prompt \"A beautiful sunset over the ocean\" \\ -negative-prompt \"shaky, glitchy, low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly, transition, static.\" \\ -seed 1234 \\ -width=768 --height=512 \\ -num-frames=121 --fps=24 \\ -num-inference-steps=30 --guidance-scale=3.0 \\ -num-gpus=2 --warmup \\ -output-file-path <out.mp4> \\ -perf-dump-path <perf.json> ``` | Metric | Baseline `origin/main` | This PR | Speedup | | --- | ---: | ---: | ---",
-      "diffusion_hits": [
-        "[/_]diffusion([/_.-]|$)",
-        "[/_]ltx([/_.-]|$)",
-        "denois",
-        "diffusion",
-        "diffusion_",
-        "ltx",
-        "multimodal_gen/runtime"
-      ],
-      "optimization_hits": [
-        "compile",
-        "fused",
-        "optimiz",
-        "speedup",
-        "torch.compile",
-        "triton"
-      ],
-      "benchmark_lines": [
-        "Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.",
-        "| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% |"
-      ],
-      "techniques": [
-        "kernel-fusion",
-        "torch-compile"
-      ],
-      "techniques_zh": [
-        "内核融合/算子快路径",
-        "torch.compile 编译"
-      ],
-      "technique_hits": {
-        "kernel-fusion": [
-          "fused",
-          "rmsnorm",
-          "triton"
-        ],
-        "torch-compile": [
-          "torch.compile"
-        ]
-      },
-      "impact_axes": [
-        "latency"
-      ],
-      "impact_axes_zh": [
-        "延迟"
-      ],
-      "changed_files": [
-        "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py",
-        "python/sglang/multimodal_gen/runtime/models/dits/ltx_2.py",
-        "python/sglang/multimodal_gen/runtime/pipelines/ltx_2_pipeline.py",
-        "python/sglang/multimodal_gen/runtime/pipelines_core/lora_pipeline.py"
-      ],
-      "changed_file_details": [
-        {
-          "filename": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py",
-          "status": "modified",
-          "additions": 3,
-          "deletions": 1,
-          "changes": 4
-        },
-        {
-          "filename": "python/sglang/multimodal_gen/runtime/models/dits/ltx_2.py",
-          "status": "modified",
-          "additions": 147,
-          "deletions": 42,
-          "changes": 189
-        },
-        {
-          "filename": "python/sglang/multimodal_gen/runtime/pipelines/ltx_2_pipeline.py",
-          "status": "modified",
-          "additions": 8,
-          "deletions": 0,
-          "changes": 8
-        },
-        {
-          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/lora_pipeline.py",
-          "status": "modified",
-          "additions": 33,
-          "deletions": 13,
-          "changes": 46
-        }
-      ],
-      "summary_version": "strict-v3-llm",
-      "strict_filter_version": "strict-v3",
-      "summary_zh": "融合 LTX-2 的 RMSNorm+scale/shift 调制到 CuTeDSL/Triton kernel，并优化两阶段 warmup 流程。E2E 延迟下降约 7.84%（37.7s→34.7s，H100）。",
-      "evidence_zh": "Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.",
-      "status_zh": "open",
-      "synced_at": "2026-04-17T07:26:25Z",
-      "fingerprint": "827e35215dc4e042a9f11bd44944da9d77d7b02050560307d8abdb886093ce41"
-    },
-    {
       "id": "sgl-project/sglang#20816",
       "repo": "sgl-project/sglang",
       "number": 20816,
@@ -141,7 +33,7 @@
       "merged": false,
       "draft": false,
       "created_at": "2026-03-18T05:40:48Z",
-      "updated_at": "2026-04-17T07:16:41Z",
+      "updated_at": "2026-04-17T07:54:15Z",
       "closed_at": null,
       "merged_at": null,
       "labels": [
@@ -334,8 +226,124 @@
       "summary_zh": "为 SGLang Diffusion 添加 CPU 平台原生支持（Intel Xeon），包含 OMP 核绑定、NUMA 自动绑定、SDPA attention 等 CPU 算子适配，支持纯 CPU 推理。",
       "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:26:25Z",
-      "fingerprint": "cb23c7d1391f47428abc65c5553d247e1b272b3fe9460aaf4c1cd389cfedca12"
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "16de8f0d7086aa328a8d34adb3543f8fe91558e6a4a7ddf869bf033b22f0d443"
+    },
+    {
+      "id": "sgl-project/sglang#23025",
+      "repo": "sgl-project/sglang",
+      "number": 23025,
+      "title": "Optimize LTX2 modulation and two-stage warmup",
+      "url": "https://github.com/sgl-project/sglang/pull/23025",
+      "author": "BBuf",
+      "state": "open",
+      "merged": false,
+      "draft": false,
+      "created_at": "2026-04-17T03:45:18Z",
+      "updated_at": "2026-04-17T07:41:57Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "lora"
+      ],
+      "body_excerpt": "Summary fuse LTX2 per-block RMSNorm + scale/shift modulation with the existing CuTeDSL fused norm kernel fuse LTX2 residual + gate and standalone scale/shift modulation with the existing Triton scale-shift kernel make the LTX-2.3 one-stage and two-stage benchmark presets explicitly include `--warmup` and avoid duplicate warmup flags Benchmark Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`. Command shape: ```bash CUDA_VISIBLE_DEVICES=0,1 PYTHONPATH=python FLASHINFER_DISABLE_VERSION_CHECK=1 \\ sglang generate \\ -model-path Lightricks/LTX-2.3 \\ -prompt \"A beautiful sunset over the ocean\" \\ -negative-prompt \"shaky, glitchy, low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly, transition, static.\" \\ -seed 1234 \\ -width=768 --height=512 \\ -num-frames=121 --fps=24 \\ -num-inference-steps=30 --guidance-scale=3.0 \\ -num-gpus=2 --warmup \\ -output-file-path <out.mp4> \\ -perf-dump-path <perf.json> ``` | Metric | Baseline `origin/main` | This PR | Speedup | | --- | ---: | ---: | ---",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "[/_]ltx([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "diffusion_",
+        "ltx",
+        "multimodal_gen/runtime"
+      ],
+      "optimization_hits": [
+        "compile",
+        "fused",
+        "optimiz",
+        "speedup",
+        "torch.compile",
+        "triton"
+      ],
+      "benchmark_lines": [
+        "Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.",
+        "| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% |"
+      ],
+      "techniques": [
+        "kernel-fusion",
+        "torch-compile"
+      ],
+      "techniques_zh": [
+        "内核融合/算子快路径",
+        "torch.compile 编译"
+      ],
+      "technique_hits": {
+        "kernel-fusion": [
+          "fused",
+          "rmsnorm",
+          "triton"
+        ],
+        "torch-compile": [
+          "torch.compile"
+        ]
+      },
+      "impact_axes": [
+        "latency"
+      ],
+      "impact_axes_zh": [
+        "延迟"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py",
+        "python/sglang/multimodal_gen/runtime/models/dits/ltx_2.py",
+        "python/sglang/multimodal_gen/runtime/pipelines/ltx_2_pipeline.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/lora_pipeline.py",
+        "python/sglang/multimodal_gen/runtime/utils/common.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 1,
+          "changes": 4
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/ltx_2.py",
+          "status": "modified",
+          "additions": 137,
+          "deletions": 42,
+          "changes": 179
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines/ltx_2_pipeline.py",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0,
+          "changes": 8
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/lora_pipeline.py",
+          "status": "modified",
+          "additions": 33,
+          "deletions": 13,
+          "changes": 46
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/utils/common.py",
+          "status": "modified",
+          "additions": 20,
+          "deletions": 0,
+          "changes": 20
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "融合 LTX-2 的 RMSNorm+scale/shift 调制到 CuTeDSL/Triton kernel，并优化两阶段 warmup 流程。E2E 延迟下降约 7.84%（37.7s→34.7s，H100）。",
+      "evidence_zh": "E2E 延迟（不含 warmup）从 37.684s 降至 34.728s，提升 7.84%（2x H100, LTX-2.3 one-stage T2V）。",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "dd52caa5112862823c68ce94d4c9db6d45f3464409189a43e4a5c0ba1ef0013f"
     },
     {
       "id": "sgl-project/sglang#22869",
@@ -480,10 +488,10 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。",
-      "evidence_zh": "2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)",
+      "evidence_zh": "DiT 搬运到 GPU 的 h2d 耗时约 67.1s（开启 layerwise offload 时），LoRA 加载约 18.5s。",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
-      "fingerprint": "79768d3827137c2dcafde864ae0bdadc450aff8c97571d6d623861b9d87d71ca"
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "83cea8731323dd1c2136d593fe884abce47d0b42a3c09802d1f230c66dd09390"
     },
     {
       "id": "sgl-project/sglang#22814",
@@ -588,10 +596,10 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "为 HunyuanVideo 的 ResnetBlock 引入 Triton GroupNorm+SiLU 融合 kernel fast path，DecodingStage 延迟降低约 6.2%。",
-      "evidence_zh": "`DenoisingStage`: `41406.19 -> 41582.68 ms` (`+0.4%`)；`DecodingStage`: `15514.60 -> 14548.95 ms` (`-6.2%`)",
+      "evidence_zh": "DenoisingStage 41406→41583ms（+0.4%），DecodingStage 15515→14549ms（-6.2%），H100 单卡。",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
-      "fingerprint": "84603421cc98db8b9bede3ad50d99efd9f2392a81e3bf5a42cbf37ad127a5149"
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "ae9f5ea9773c10538748e2faa445496eeec83d5942584f2a9b602be8aaa94962"
     },
     {
       "id": "sgl-project/sglang#20434",
@@ -698,10 +706,10 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。",
-      "evidence_zh": "峰值显存 63.26 GB，详见 PR 描述中的 benchmark 日志。",
+      "evidence_zh": "峰值显存 63.26 GB（已分配 61.10 GB），显存池开销 2.17 GB（3.4%），Max peak 64780 MB。",
       "status_zh": "closed-unmerged",
-      "synced_at": "2026-04-17T07:11:38Z",
-      "fingerprint": "65e47070a195174621bfd0d0f8c8a04db9b2cadc50b34cd8498eeea3fd2f06ab"
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "36715eb77359e9e16846998887091cd6120d2b5e40dc23485ec77ce316e3b822"
     },
     {
       "id": "sgl-project/sglang#19876",
@@ -828,10 +836,10 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。",
-      "evidence_zh": "峰值显存 31.51 GB，详见 PR 描述中的 benchmark 日志。",
+      "evidence_zh": "峰值显存 31.51 GB（已分配 27.30 GB），显存池开销 4.21 GB（13.4%），Max peak 32268 MB。",
       "status_zh": "closed-unmerged",
-      "synced_at": "2026-04-17T07:11:38Z",
-      "fingerprint": "0ec8b741193ffb6430b1012db71819d3869e545d2a1de1dd50269995196d60c3"
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "5842029f163e1f3d5dd01e910aa6cd51023c1dff7bdeede1a9a60ed28ee63ef2"
     },
     {
       "id": "sgl-project/sglang#22445",
@@ -897,10 +905,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "替换 LTX-2 中 torch.nn.RMSNorm 为自定义融合算子并集成 fused_rmsnorm，NPU 上 E2E 延迟降低约 27%，GPU 上降低约 3%。",
+      "summary_zh": "在 LTX-2 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 ltx_2.py。",
       "evidence_zh": "This PR reduces E2E latency by approximately 27% on NPU and 3% on GPU.；E2E before the pr: 102.74s",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "78c816a3b46edf2a5feef7a2e9e55edde7d03ac7678490917773f5406469e00e"
     },
     {
@@ -1050,10 +1058,10 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。",
-      "evidence_zh": "Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P",
+      "evidence_zh": "吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%（多模型 text-to-image benchmark）。",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
-      "fingerprint": "23aec28f6400a9e9861ea99b68bf7974d41bcaa2fa289dfdebd664d9832caa8d"
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "0de153ab687d8c4248dad4275d3dd43a3a2d9d676141b3e1d1ef43d37e1faf0f"
     },
     {
       "id": "sgl-project/sglang#22805",
@@ -1150,10 +1158,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "将 FLUX.2 USP 中 Q/K/V 的三次独立 all-to-all 通信合并为一次 pack 后的单次 all-to-all，DenoisingStage 延迟降低约 2.0%。",
+      "summary_zh": "优化 FLUX.2 的多卡通信路径，减少 all-to-all 或 collective 调用带来的同步开销。 主要改动涉及 usp.py, layer.py。",
       "evidence_zh": "| **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ |；| DenoisingStage | 4523.43 | 4432.28 | -91.15 | -2.0% | ⚪️ |",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "58a556c4a30519581c1db62d23a059224dcc9c7bc7fa05ed6fac5d2186eed87e"
     },
     {
@@ -1289,10 +1297,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "将多输出 diffusion 生成从全量 batch 改为逐输出顺序执行，峰值显存从 57GB 降至 32GB（降幅 43.9%），DiT 时间几乎不变。",
+      "summary_zh": "调整 Qwen-Image 的执行方式以压低峰值显存，缓解多输出或大 batch 场景下的 OOM 风险。 主要改动涉及 pipeline_executor.py, parallel_executor.py。",
       "evidence_zh": "| DiT time | 15.2041 s | 15.4286 s | +1.4% |；| Peak GPU memory | 57,104 MB | **32,042 MB** | **↓ 43.9%** |",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "b21b79ca4a600fc15088afae5f0548a2d71eade8ad487ebadb7a808476aa4c59"
     },
     {
@@ -1367,10 +1375,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "为 LTX-2 denoising 循环引入 RoPE 坐标 LRU 缓存，避免每步重复构造 video/audio coords，减少重复计算开销。",
+      "summary_zh": "在 LTX-2 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 denoising_av.py。",
       "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "a13daf6951f3e04f8d34c9ad74fec7c9e2017718d124b43846acf8c9e727614a"
     },
     {
@@ -1474,10 +1482,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "引入混合 attention schedule，允许部分 denoising 步使用 FP8 attention、其余步使用高精度 backend，兼顾质量与速度。DenoisingStage 延迟降低 11-13%。",
+      "summary_zh": "在 hybrid-schedule 路径引入 FP8 或量化配置，降低 GEMM 或 attention 计算成本。 主要改动涉及 hybrid_schedule.py, layer.py。",
       "evidence_zh": "| DenoisingStage | 158981.35 | 138116.00 | -20865.35 | -13.1% | 🟢 |；| DenoisingStage | 158981.35 | 140662.09 | -18319.26 | -11.5% | 🟢 |",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "8a420076f964cea452a2965b0613fe6427534f633555abd9f5c4b01d0cd229b8"
     },
     {
@@ -1689,10 +1697,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。",
+      "summary_zh": "为 Z-Image 路径接入 CUDA Graph，重点减少 denoising 过程中的 host launch gap 和 step 间空洞。 主要改动涉及 diffusion_cuda_graph_runner.py, convert_zimage_hf_to_fp8.py。",
       "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "b2b3ecb42ae3043be8585048a1f3f184d044c4fad0f77496589229fa0eb0b94a"
     },
     {
@@ -1778,10 +1786,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "将 AMD MI355X 上 diffusion 模型的 FP8 attention 从 flash_attn 切换为 MLA prefill ASM kernel，DenoisingStage 延迟降低约 17-19%。",
+      "summary_zh": "在 aiter 路径引入 FP8 或量化配置，降低 GEMM 或 attention 计算成本。 主要改动涉及 aiter.py。",
       "evidence_zh": "| DenoisingStage (s) | 432.40 | 348.43 | **-19.4%** |；| DenoisingStage (s) | 1403.50 | 1152.64 | **-17.9%** |",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "44cc8a0ab3426ded787ca2bb819a972e614fd8b18737281b7db12f01dca2baba"
     },
     {
@@ -1926,10 +1934,10 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "将 diffusion pipeline 的 torch.compile 默认模式从 max-autotune 改为 default，消除 1.47-1.68x denoising 回退，同时加速 text encoding（2x）和 VAE decode（1.9x）。",
-      "evidence_zh": "Observations: max-autotune causes 1.47-1.68x denoising regression and 30s+ warmup on Qwen. default mode keeps denoising at parity with eager while speeding up text encoding and VAE decode. Tested on FLUX.2-Klein-4B (4 st",
+      "evidence_zh": "max-autotune 导致 1.47-1.68x denoising 回退和 30s+ warmup，default 模式消除回退并加速 text encoding 和 VAE decode。测试环境 1x H200。",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
-      "fingerprint": "5b8f5625bd3d0b9a3389df1336d4de98d9919f64e62556fc943d429197de1e15"
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "1a59aae7599859f13518456a7e45e5540a91635ca6034c08be025191fe91e9b9"
     },
     {
       "id": "sgl-project/sglang#19516",
@@ -2022,10 +2030,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "为 Qwen-Image 接入 CUDA Graph 支持，解决短序列模型中 CPU launch overhead 占比高的问题，减少 denoising 的 host-device 同步开销。",
+      "summary_zh": "为 Qwen-Image 路径接入 CUDA Graph，重点减少 denoising 过程中的 host launch gap 和 step 间空洞。 主要改动涉及 qwen_image.py, denoising.py。",
       "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。",
       "status_zh": "open",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "a39f7155f93a79460655866729c66841f8b488aa8155b9581bf9a7e6ba140a1d"
     },
     {
@@ -2156,10 +2164,10 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。",
-      "evidence_zh": "Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|",
+      "evidence_zh": "FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%；开启 cache-dit 后可进一步降至 12.8s。",
       "status_zh": "merged",
-      "synced_at": "2026-04-17T07:11:38Z",
-      "fingerprint": "4d08990484a97ce2c93794f4053b3db66b16931dd2f12bb15ed313ea47e4f3d8"
+      "synced_at": "2026-04-17T08:02:34Z",
+      "fingerprint": "a83373963337b89ca28402a669e214c7e392def58a2b8456318846c06ee1b058"
     },
     {
       "id": "sgl-project/sglang#19632",
@@ -2298,10 +2306,10 @@
       ],
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
-      "summary_zh": "通过融合 CUDA kernel 减少 FLUX/Z-Image DiT denoising 循环中的 kernel launch 次数，Denoising Stage 总时间降低约 1.64%。",
+      "summary_zh": "在 Z-Image 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 flux.py, reproduce.md。",
       "evidence_zh": "| **Denoising Stage Total** | 0.7028s | 0.6913s | **1.64%** |；| **Average Time Per Step** | 0.1751s | 0.1721s | **1.71%** |",
       "status_zh": "closed-unmerged",
-      "synced_at": "2026-04-17T07:11:38Z",
+      "synced_at": "2026-04-17T08:02:34Z",
       "fingerprint": "db6f13b62bd3cf9b4e5b7c904080a63c2b1b0a7e05fdca6667a7c2b0343ef1f0"
     }
   ]

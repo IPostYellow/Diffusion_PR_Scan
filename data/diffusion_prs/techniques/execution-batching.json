@@ -1,6 +1,6 @@
 {
   "strict_filter_version": "strict-v3",
-  "generated_at_utc": "2026-04-17T07:26:25Z",
+  "generated_at_utc": "2026-04-17T08:02:34Z",
   "repo_summary": {
     "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
@@ -17,8 +17,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/20434",
         "status_zh": "closed-unmerged",
         "updated_at": "2026-04-17T01:00:23Z",
-        "summary_zh": "将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。",
-        "evidence_zh": "[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)；[03-12 08:39:16] Me"
+        "summary_zh": "调整 Qwen-Image 的 torch.compile 接入或默认策略，让编译收益更稳定地落到推理热路径。 主要改动涉及 qwen_image.py, denoising.py。",
+        "evidence_zh": "3.4%；[03-12 08:39:16] Memory usage - Max peak: 64780.00 MB, Avg peak: 64780.00 MB"
       }
     ]
   }

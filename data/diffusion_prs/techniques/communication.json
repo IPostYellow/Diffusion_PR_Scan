@@ -1,6 +1,6 @@
 {
   "strict_filter_version": "strict-v3",
-  "generated_at_utc": "2026-04-17T07:26:25Z",
+  "generated_at_utc": "2026-04-17T08:02:34Z",
   "repo_summary": {
     "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
@@ -17,7 +17,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/22805",
         "status_zh": "open",
         "updated_at": "2026-04-14T13:12:36Z",
-        "summary_zh": "将 FLUX.2 USP 中 Q/K/V 的三次独立 all-to-all 通信合并为一次 pack 后的单次 all-to-all，DenoisingStage 延迟降低约 2.0%。",
+        "summary_zh": "优化 FLUX.2 的多卡通信路径，减少 all-to-all 或 collective 调用带来的同步开销。 主要改动涉及 usp.py, layer.py。",
         "evidence_zh": "| **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ |；| DenoisingStage | 4523.43 | 4432.28 | -91.15 | -2.0% | ⚪️ |"
       }
     ]

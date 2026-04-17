@@ -1,6 +1,6 @@
 {
   "strict_filter_version": "strict-v3",
-  "generated_at_utc": "2026-04-17T07:26:25Z",
+  "generated_at_utc": "2026-04-17T08:02:34Z",
   "repo_summary": {
     "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
@@ -16,7 +16,7 @@
         "title": "[Diffusion][CPU] Init CPU platform support for SGLang Diffusion",
         "url": "https://github.com/sgl-project/sglang/pull/20816",
         "status_zh": "open",
-        "updated_at": "2026-04-17T07:16:41Z",
+        "updated_at": "2026-04-17T07:54:15Z",
         "summary_zh": "在 Z-Image 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 cpu_worker.py, mps_fallback.py。",
         "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。"
       },
@@ -27,7 +27,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/21742",
         "status_zh": "open",
         "updated_at": "2026-04-08T08:07:26Z",
-        "summary_zh": "引入混合 attention schedule，允许部分 denoising 步使用 FP8 attention、其余步使用高精度 backend，兼顾质量与速度。DenoisingStage 延迟降低 11-13%。",
+        "summary_zh": "在 hybrid-schedule 路径引入 FP8 或量化配置，降低 GEMM 或 attention 计算成本。 主要改动涉及 hybrid_schedule.py, layer.py。",
         "evidence_zh": "| DenoisingStage | 158981.35 | 138116.00 | -20865.35 | -13.1% | 🟢 |；| DenoisingStage | 158981.35 | 140662.09 | -18319.26 | -11.5% | 🟢 |"
       },
       {
@@ -37,7 +37,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/21912",
         "status_zh": "open",
         "updated_at": "2026-04-02T16:16:32Z",
-        "summary_zh": "为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。",
+        "summary_zh": "为 Z-Image 路径接入 CUDA Graph，重点减少 denoising 过程中的 host launch gap 和 step 间空洞。 主要改动涉及 diffusion_cuda_graph_runner.py, convert_zimage_hf_to_fp8.py。",
         "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。"
       },
       {
@@ -47,7 +47,7 @@
         "url": "https://github.com/sgl-project/sglang/pull/20319",
         "status_zh": "open",
         "updated_at": "2026-03-31T06:12:14Z",
-        "summary_zh": "将 AMD MI355X 上 diffusion 模型的 FP8 attention 从 flash_attn 切换为 MLA prefill ASM kernel，DenoisingStage 延迟降低约 17-19%。",
+        "summary_zh": "在 aiter 路径引入 FP8 或量化配置，降低 GEMM 或 attention 计算成本。 主要改动涉及 aiter.py。",
         "evidence_zh": "| DenoisingStage (s) | 432.40 | 348.43 | **-19.4%** |；| DenoisingStage (s) | 1403.50 | 1152.64 | **-17.9%** |"
       },
       {
@@ -57,8 +57,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/19673",
         "status_zh": "merged",
         "updated_at": "2026-03-04T06:17:46Z",
-        "summary_zh": "为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。",
-        "evidence_zh": "Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|"
+        "summary_zh": "调整 FLUX 的 torch.compile 接入或默认策略，让编译收益更稳定地落到推理热路径。 主要改动涉及 diffusers_pipeline.py, schedule_batch.py。",
+        "evidence_zh": "23.6s -> 20.3s；|23.6s|20.3s|12.8s|"
       }
     ]
   }

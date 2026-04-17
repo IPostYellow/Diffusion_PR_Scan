@@ -1,0 +1,157 @@
+{
+  "run_id": "20260417T080234Z",
+  "generated_at_utc": "2026-04-17T08:02:34Z",
+  "mode": "incremental_strict_sync",
+  "strict_filter_version": "strict-v3",
+  "repos_scanned": [
+    "sgl-project/sglang",
+    "vllm-project/vllm"
+  ],
+  "matched_pr_count": 18,
+  "repos_summary": {
+    "sgl-project/sglang": 18,
+    "vllm-project/vllm": 0
+  },
+  "category_counts": {
+    "kernel-fusion": 7,
+    "cuda-graph": 4,
+    "torch-compile": 5,
+    "low-precision-quantization": 4,
+    "attention-backend": 5,
+    "execution-batching": 1,
+    "communication": 1,
+    "memory-offload": 9,
+    "cache-reuse": 5,
+    "memory-efficiency": 3,
+    "scheduling-throughput": 4
+  },
+  "notes_zh": [
+    "本次按严格 diffusion 性能规则进行增量同步。",
+    "只保留带有明确性能目标和机制/benchmark 证据的 PR。",
+    "新增和更新 PR 会生成中文优化摘要，并可直接推送到钉钉。"
+  ],
+  "items": [
+    {
+      "repo": "sgl-project/sglang",
+      "number": 20816,
+      "title": "[Diffusion][CPU] Init CPU platform support for SGLang Diffusion",
+      "status_zh": "open",
+      "techniques": [
+        "kernel-fusion",
+        "attention-backend",
+        "memory-offload"
+      ],
+      "summary_zh": "在 Z-Image 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 cpu_worker.py, mps_fallback.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/20816"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 23025,
+      "title": "Optimize LTX2 modulation and two-stage warmup",
+      "status_zh": "open",
+      "techniques": [
+        "kernel-fusion",
+        "torch-compile"
+      ],
+      "summary_zh": "在 LTX-2.3 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 ltx_2.py, lora_pipeline.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/23025"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22869,
+      "title": "[diffusion] optimize ltx-2.3 offload hot paths",
+      "status_zh": "open",
+      "techniques": [
+        "low-precision-quantization",
+        "memory-offload",
+        "memory-efficiency",
+        "scheduling-throughput"
+      ],
+      "summary_zh": "在 LTX-2.3 路径引入 FP8 或量化配置，降低 GEMM 或 attention 计算成本。 主要改动涉及 ltx_2_pipeline.py, server_args.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/22869"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 22814,
+      "title": "diffusion: add HunyuanVideo GroupNorm+SiLU fast path",
+      "status_zh": "open",
+      "techniques": [
+        "kernel-fusion",
+        "memory-offload"
+      ],
+      "summary_zh": "在 HunyuanVideo 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 group_norm_silu.py, test_group_norm_silu.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/22814"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 20434,
+      "title": "[diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead",
+      "status_zh": "closed-unmerged",
+      "techniques": [
+        "torch-compile",
+        "execution-batching",
+        "memory-offload"
+      ],
+      "summary_zh": "调整 Qwen-Image 的 torch.compile 接入或默认策略，让编译收益更稳定地落到推理热路径。 主要改动涉及 qwen_image.py, denoising.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/20434"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 19876,
+      "title": "[Diffusion] Diffusion support cuda graph",
+      "status_zh": "closed-unmerged",
+      "techniques": [
+        "cuda-graph",
+        "memory-offload",
+        "cache-reuse"
+      ],
+      "summary_zh": "为 FLUX 路径接入 CUDA Graph，重点减少 denoising 过程中的 host launch gap 和 step 间空洞。 主要改动涉及 denoising.py, cuda_graph_preparation.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/19876"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 18764,
+      "title": "[diffusion] Add dynamic batching v0",
+      "status_zh": "open",
+      "techniques": [
+        "memory-offload",
+        "memory-efficiency",
+        "scheduling-throughput"
+      ],
+      "summary_zh": "重排 Z-Image 的 offload 或 resident 策略，把权重搬运和设备切换尽量移出请求热路径。 主要改动涉及 scheduler.py, sampling_params.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/18764"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 21417,
+      "title": "[Diffusion] Change default torch.compile mode from max-autotune to default",
+      "status_zh": "open",
+      "techniques": [
+        "cuda-graph",
+        "torch-compile"
+      ],
+      "summary_zh": "为 Z-Image 路径接入 CUDA Graph，重点减少 denoising 过程中的 host launch gap 和 step 间空洞。 主要改动涉及 test_torch_compile_mode.py, diffusers_pipeline.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/21417"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 19673,
+      "title": "[diffusion] support torch compile for diffusers backend",
+      "status_zh": "merged",
+      "techniques": [
+        "torch-compile",
+        "attention-backend",
+        "memory-offload",
+        "cache-reuse"
+      ],
+      "summary_zh": "调整 FLUX 的 torch.compile 接入或默认策略，让编译收益更稳定地落到推理热路径。 主要改动涉及 diffusers_pipeline.py, schedule_batch.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/19673"
+    }
+  ],
+  "notify_delta": {
+    "added": 0,
+    "updated": 9,
+    "suppressed": 0,
+    "suppressed_ids": []
+  }
+}
