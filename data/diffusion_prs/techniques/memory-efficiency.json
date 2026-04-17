@@ -1,15 +1,35 @@
 {
-  "strict_filter_version": "strict-v1",
-  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "strict_filter_version": "strict-v3",
+  "generated_at_utc": "2026-04-17T07:26:25Z",
   "repo_summary": {
-    "sgl-project/sglang": 19,
+    "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
   },
   "category": {
     "slug": "memory-efficiency",
     "label_zh": "显存效率",
-    "count": 2,
+    "count": 3,
     "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 22869,
+        "title": "[diffusion] optimize ltx-2.3 offload hot paths",
+        "url": "https://github.com/sgl-project/sglang/pull/22869",
+        "status_zh": "open",
+        "updated_at": "2026-04-17T06:05:46Z",
+        "summary_zh": "优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。",
+        "evidence_zh": "2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 18764,
+        "title": "[diffusion] Add dynamic batching v0",
+        "url": "https://github.com/sgl-project/sglang/pull/18764",
+        "status_zh": "open",
+        "updated_at": "2026-04-15T01:47:51Z",
+        "summary_zh": "为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。",
+        "evidence_zh": "Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P；| Model | Throughpu"
+      },
       {
         "repo": "sgl-project/sglang",
         "number": 22183,
@@ -17,18 +37,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/22183",
         "status_zh": "open",
         "updated_at": "2026-04-12T15:01:24Z",
-        "summary_zh": "把 `num_outputs_per_prompt` 从 denoising 内部大 batch 改成执行器层的 sequential per-output，解决多输出时 OOM 和模型不兼容问题。这个 PR 主要优化的是显存占用而非单次速度。",
-        "evidence_zh": "4 输出 FLUX 测试里 DiT 时间基本持平，但峰值显存 57.10GB->32.04GB。"
-      },
-      {
-        "repo": "sgl-project/sglang",
-        "number": 21573,
-        "title": "Add persistent diffusion workspace reuse and extend random benchmarks for image-conditioned tasks",
-        "url": "https://github.com/sgl-project/sglang/pull/21573",
-        "status_zh": "open",
-        "updated_at": "2026-04-01T23:41:03Z",
-        "summary_zh": "在多个 diffusion denoising loop 里复用 persistent workspace，避免每步重复分配临时 buffer。它属于低风险的 allocator/temporary tensor 开销优化。",
-        "evidence_zh": "H200 单卡测试里，Wan DMD、Flux.2 与 Helios 都有小幅平均延迟或 P99 改善，并在部分模型上略降峰值显存。"
+        "summary_zh": "将多输出 diffusion 生成从全量 batch 改为逐输出顺序执行，峰值显存从 57GB 降至 32GB（降幅 43.9%），DiT 时间几乎不变。",
+        "evidence_zh": "| DiT time | 15.2041 s | 15.4286 s | +1.4% |；| Peak GPU memory | 57,104 MB | **32,042 MB** | **↓ 43.9%** |"
       }
     ]
   }

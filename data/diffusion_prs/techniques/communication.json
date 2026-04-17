@@ -1,8 +1,8 @@
 {
-  "strict_filter_version": "strict-v1",
-  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "strict_filter_version": "strict-v3",
+  "generated_at_utc": "2026-04-17T07:26:25Z",
   "repo_summary": {
-    "sgl-project/sglang": 19,
+    "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
   },
   "category": {
@@ -17,8 +17,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/22805",
         "status_zh": "open",
         "updated_at": "2026-04-14T13:12:36Z",
-        "summary_zh": "在 Flux2 的 USP attention 中把 Q/K/V 三次 all-to-all 合并成一次打包通信，减少多 GPU 通信调用和拆分开销。收益集中在 denoising 通信热段。",
-        "evidence_zh": "8xB200 与 8xMI355X 的 1024/2048 分辨率测试中，DenoisingStage 约下降 0.7%-2.0%，总体延迟下降约 0.5%-1.8%。"
+        "summary_zh": "将 FLUX.2 USP 中 Q/K/V 的三次独立 all-to-all 通信合并为一次 pack 后的单次 all-to-all，DenoisingStage 延迟降低约 2.0%。",
+        "evidence_zh": "| **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ |；| DenoisingStage | 4523.43 | 4432.28 | -91.15 | -2.0% | ⚪️ |"
       }
     ]
   }

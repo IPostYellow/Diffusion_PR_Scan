@@ -1,24 +1,104 @@
 {
-  "strict_filter_version": "strict-v1",
-  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "strict_filter_version": "strict-v3",
+  "generated_at_utc": "2026-04-17T07:26:25Z",
   "repo_summary": {
-    "sgl-project/sglang": 19,
+    "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
   },
   "category": {
     "slug": "memory-offload",
     "label_zh": "Offload/驻留策略",
-    "count": 1,
+    "count": 9,
     "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 20816,
+        "title": "[Diffusion][CPU] Init CPU platform support for SGLang Diffusion",
+        "url": "https://github.com/sgl-project/sglang/pull/20816",
+        "status_zh": "open",
+        "updated_at": "2026-04-17T07:16:41Z",
+        "summary_zh": "在 Z-Image 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 cpu_worker.py, mps_fallback.py。",
+        "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。"
+      },
       {
         "repo": "sgl-project/sglang",
         "number": 22869,
         "title": "[diffusion] optimize ltx-2.3 offload hot paths",
         "url": "https://github.com/sgl-project/sglang/pull/22869",
         "status_zh": "open",
-        "updated_at": "2026-04-17T00:44:26Z",
-        "summary_zh": "围绕 LTX-2.3 两阶段管线，减少 DiT/VAE 的 CPU offload 和请求期 `module.to(cpu/cuda)` 切换，新增 snapshot/resident 模式与预合并 stage-2 transformer。重点是把权重搬运和 LoRA 切换的同步开销从请求路径里移走。",
-        "evidence_zh": "同一条链路下 e2e 从 legacy 33.93s 降到 snapshot 30.16s，再到 resident 21.42s；resident 模式显存峰值提升到约 99.31GB。"
+        "updated_at": "2026-04-17T06:05:46Z",
+        "summary_zh": "优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。",
+        "evidence_zh": "2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 22814,
+        "title": "diffusion: add HunyuanVideo GroupNorm+SiLU fast path",
+        "url": "https://github.com/sgl-project/sglang/pull/22814",
+        "status_zh": "open",
+        "updated_at": "2026-04-17T01:24:02Z",
+        "summary_zh": "为 HunyuanVideo 的 ResnetBlock 引入 Triton GroupNorm+SiLU 融合 kernel fast path，DecodingStage 延迟降低约 6.2%。",
+        "evidence_zh": "`DenoisingStage`: `41406.19 -> 41582.68 ms` (`+0.4%`)；`DecodingStage`: `15514.60 -> 14548.95 ms` (`-6.2%`)"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 20434,
+        "title": "[diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead",
+        "url": "https://github.com/sgl-project/sglang/pull/20434",
+        "status_zh": "closed-unmerged",
+        "updated_at": "2026-04-17T01:00:23Z",
+        "summary_zh": "将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。",
+        "evidence_zh": "[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)；[03-12 08:39:16] Me"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19876,
+        "title": "[Diffusion] Diffusion support cuda graph",
+        "url": "https://github.com/sgl-project/sglang/pull/19876",
+        "status_zh": "closed-unmerged",
+        "updated_at": "2026-04-17T01:00:22Z",
+        "summary_zh": "为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。",
+        "evidence_zh": "[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa；[03-04 03:52:29] Me"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 18764,
+        "title": "[diffusion] Add dynamic batching v0",
+        "url": "https://github.com/sgl-project/sglang/pull/18764",
+        "status_zh": "open",
+        "updated_at": "2026-04-15T01:47:51Z",
+        "summary_zh": "为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。",
+        "evidence_zh": "Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P；| Model | Throughpu"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 20319,
+        "title": "[AMD] Support fp8 MHA for diffusion model",
+        "url": "https://github.com/sgl-project/sglang/pull/20319",
+        "status_zh": "open",
+        "updated_at": "2026-03-31T06:12:14Z",
+        "summary_zh": "将 AMD MI355X 上 diffusion 模型的 FP8 attention 从 flash_attn 切换为 MLA prefill ASM kernel，DenoisingStage 延迟降低约 17-19%。",
+        "evidence_zh": "| DenoisingStage (s) | 432.40 | 348.43 | **-19.4%** |；| DenoisingStage (s) | 1403.50 | 1152.64 | **-17.9%** |"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19516,
+        "title": "[Diffusion] add cuda graph support for Qwen-Image",
+        "url": "https://github.com/sgl-project/sglang/pull/19516",
+        "status_zh": "open",
+        "updated_at": "2026-03-18T01:23:17Z",
+        "summary_zh": "为 Qwen-Image 接入 CUDA Graph 支持，解决短序列模型中 CPU launch overhead 占比高的问题，减少 denoising 的 host-device 同步开销。",
+        "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19673,
+        "title": "[diffusion] support torch compile for diffusers backend",
+        "url": "https://github.com/sgl-project/sglang/pull/19673",
+        "status_zh": "merged",
+        "updated_at": "2026-03-04T06:17:46Z",
+        "summary_zh": "为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。",
+        "evidence_zh": "Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|"
       }
     ]
   }

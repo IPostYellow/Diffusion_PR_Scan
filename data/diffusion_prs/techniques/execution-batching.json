@@ -1,8 +1,8 @@
 {
-  "strict_filter_version": "strict-v1",
-  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "strict_filter_version": "strict-v3",
+  "generated_at_utc": "2026-04-17T07:26:25Z",
   "repo_summary": {
-    "sgl-project/sglang": 19,
+    "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
   },
   "category": {
@@ -17,8 +17,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/20434",
         "status_zh": "closed-unmerged",
         "updated_at": "2026-04-17T01:00:23Z",
-        "summary_zh": "把 Qwen-Image 串行 CFG 的 cond/uncond 两次 transformer forward 合并成一次 batched forward，再按原公式合成 guidance。算法不变，主要减少每步框架与 launch 开销。",
-        "evidence_zh": "50 步 denoising 的单步时间 0.3052s->0.2553s，总 denoising 15.2640s->12.7667s。"
+        "summary_zh": "将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。",
+        "evidence_zh": "[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)；[03-12 08:39:16] Me"
       }
     ]
   }

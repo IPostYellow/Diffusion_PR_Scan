@@ -1,6 +1,6 @@
 {
-  "strict_filter_version": "strict-v1",
-  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "strict_filter_version": "strict-v3",
+  "generated_at_utc": "2026-04-17T07:26:25Z",
   "scan_scope": {
     "repos_scanned": [
       "sgl-project/sglang",
@@ -13,16 +13,480 @@
     ],
     "excluded_by_design_zh": [
       "文档、CI、测试、benchmark-only、Dockerfile 变更",
-      "只做模型支持/平台移植、没有明确性能目标的 PR",
+      "只做模型支持或平台移植、没有明确性能目标的 PR",
       "仅标题含泛词但没有具体优化描述或证据的 PR"
     ]
   },
   "repos_summary": {
-    "sgl-project/sglang": 19,
+    "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
   },
   "items": [
     {
+      "id": "sgl-project/sglang#23025",
+      "repo": "sgl-project/sglang",
+      "number": 23025,
+      "title": "Optimize LTX2 modulation and two-stage warmup",
+      "url": "https://github.com/sgl-project/sglang/pull/23025",
+      "author": "BBuf",
+      "state": "open",
+      "merged": false,
+      "draft": false,
+      "created_at": "2026-04-17T03:45:18Z",
+      "updated_at": "2026-04-17T07:19:21Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "lora"
+      ],
+      "body_excerpt": "Summary fuse LTX2 per-block RMSNorm + scale/shift modulation with the existing CuTeDSL fused norm kernel fuse LTX2 residual + gate and standalone scale/shift modulation with the existing Triton scale-shift kernel make the LTX-2.3 one-stage and two-stage benchmark presets explicitly include `--warmup` and avoid duplicate warmup flags Benchmark Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`. Command shape: ```bash CUDA_VISIBLE_DEVICES=0,1 PYTHONPATH=python FLASHINFER_DISABLE_VERSION_CHECK=1 \\ sglang generate \\ -model-path Lightricks/LTX-2.3 \\ -prompt \"A beautiful sunset over the ocean\" \\ -negative-prompt \"shaky, glitchy, low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly, transition, static.\" \\ -seed 1234 \\ -width=768 --height=512 \\ -num-frames=121 --fps=24 \\ -num-inference-steps=30 --guidance-scale=3.0 \\ -num-gpus=2 --warmup \\ -output-file-path <out.mp4> \\ -perf-dump-path <perf.json> ``` | Metric | Baseline `origin/main` | This PR | Speedup | | --- | ---: | ---: | ---",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "[/_]ltx([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "diffusion_",
+        "ltx",
+        "multimodal_gen/runtime"
+      ],
+      "optimization_hits": [
+        "compile",
+        "fused",
+        "optimiz",
+        "speedup",
+        "torch.compile",
+        "triton"
+      ],
+      "benchmark_lines": [
+        "Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.",
+        "| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% |"
+      ],
+      "techniques": [
+        "kernel-fusion",
+        "torch-compile"
+      ],
+      "techniques_zh": [
+        "内核融合/算子快路径",
+        "torch.compile 编译"
+      ],
+      "technique_hits": {
+        "kernel-fusion": [
+          "fused",
+          "rmsnorm",
+          "triton"
+        ],
+        "torch-compile": [
+          "torch.compile"
+        ]
+      },
+      "impact_axes": [
+        "latency"
+      ],
+      "impact_axes_zh": [
+        "延迟"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py",
+        "python/sglang/multimodal_gen/runtime/models/dits/ltx_2.py",
+        "python/sglang/multimodal_gen/runtime/pipelines/ltx_2_pipeline.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/lora_pipeline.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/.claude/skills/sglang-diffusion-benchmark-profile/scripts/bench_diffusion_denoise.py",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 1,
+          "changes": 4
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/ltx_2.py",
+          "status": "modified",
+          "additions": 147,
+          "deletions": 42,
+          "changes": 189
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines/ltx_2_pipeline.py",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0,
+          "changes": 8
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/lora_pipeline.py",
+          "status": "modified",
+          "additions": 33,
+          "deletions": 13,
+          "changes": 46
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "融合 LTX-2 的 RMSNorm+scale/shift 调制到 CuTeDSL/Triton kernel，并优化两阶段 warmup 流程。E2E 延迟下降约 7.84%（37.7s→34.7s，H100）。",
+      "evidence_zh": "Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.；| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% ",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:26:25Z",
+      "fingerprint": "827e35215dc4e042a9f11bd44944da9d77d7b02050560307d8abdb886093ce41"
+    },
+    {
+      "id": "sgl-project/sglang#20816",
+      "repo": "sgl-project/sglang",
+      "number": 20816,
+      "title": "[Diffusion][CPU] Init CPU platform support for SGLang Diffusion",
+      "url": "https://github.com/sgl-project/sglang/pull/20816",
+      "author": "jianan-gu",
+      "state": "open",
+      "merged": false,
+      "draft": false,
+      "created_at": "2026-03-18T05:40:48Z",
+      "updated_at": "2026-04-17T07:16:41Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "dependencies",
+        "diffusion",
+        "jit-kernel"
+      ],
+      "body_excerpt": "Motivation This PR adds native support to run SGLang Diffusion on CPU only platforms (e.g., Intel Xeon) Key changes 1. CPU source installation for SGLang Diffusion 2. General CPU only path logic functionality (like no offloading...) 3. CPU OMP core binding and automatic NUMA nodes binding 4. CPU functionality with key ops using torch native path (SDPA attention, `apply_rotary_embedding `and more) 5. TP functionality and commutation ops with shared memory optimizations (allreduce/allgather) Tested models Tongyi-MAI/Z-Image-Turbo ``` sglang generate --model-path Tongyi-MAI/Z-Image-Turbo --prompt \"A curious raccoon peers through a vibrant field of yellow sunflowers, its eyes wide with interest\" --generator-device cpu ``` <img width=\"360\" height=\"360\" alt=\"A_curious_raccoon_peers_through_a_vibrant_field_of_yellow_sunflowers_its_eyes_wide_with_interest_20260318-045352_9f34c904\" src=\"https://github.com/user-attachments/assets/3edba4c6-c701-41e9-b44d-521aec0937fb\" /> black-forest-labs/FLUX.1-dev ``` sglang generate --model-path black-forest-labs/FLUX.1-dev --prompt \"A curious raccoon peers through a vibrant field of yellow sunflowers, its eyes wide with interest\" --generator-device cpu ``",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "diffusion",
+        "flux",
+        "multimodal_gen/runtime",
+        "qwen-image",
+        "wan",
+        "z-image"
+      ],
+      "optimization_hits": [
+        "offload",
+        "optimiz",
+        "triton"
+      ],
+      "benchmark_lines": [],
+      "techniques": [
+        "kernel-fusion",
+        "attention-backend",
+        "memory-offload"
+      ],
+      "techniques_zh": [
+        "内核融合/算子快路径",
+        "注意力后端/精度调度",
+        "Offload/驻留策略"
+      ],
+      "technique_hits": {
+        "kernel-fusion": [
+          "fused",
+          "rmsnorm",
+          "triton"
+        ],
+        "attention-backend": [
+          "attention backend"
+        ],
+        "memory-offload": [
+          "cpu offload",
+          "offload"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "memory"
+      ],
+      "impact_axes_zh": [
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "python/pyproject_cpu.toml",
+        "python/sglang/jit_kernel/diffusion/triton/mps_fallback.py",
+        "python/sglang/jit_kernel/diffusion/triton/norm.py",
+        "python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py",
+        "python/sglang/jit_kernel/diffusion/triton/rotary.py",
+        "python/sglang/jit_kernel/diffusion/triton/scale_shift.py",
+        "python/sglang/jit_kernel/diffusion/triton/torch_fallback.py",
+        "python/sglang/multimodal_gen/runtime/distributed/group_coordinator.py",
+        "python/sglang/multimodal_gen/runtime/distributed/parallel_state.py",
+        "python/sglang/multimodal_gen/runtime/layers/layernorm.py",
+        "python/sglang/multimodal_gen/runtime/loader/component_loaders/text_encoder_loader.py",
+        "python/sglang/multimodal_gen/runtime/managers/cpu_worker.py",
+        "python/sglang/multimodal_gen/runtime/managers/scheduler.py",
+        "python/sglang/multimodal_gen/runtime/platforms/cpu.py",
+        "python/sglang/multimodal_gen/runtime/platforms/interface.py",
+        "python/sglang/multimodal_gen/runtime/server_args.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/pyproject_cpu.toml",
+          "status": "modified",
+          "additions": 20,
+          "deletions": 0,
+          "changes": 20
+        },
+        {
+          "filename": "python/sglang/jit_kernel/diffusion/triton/mps_fallback.py",
+          "status": "modified",
+          "additions": 14,
+          "deletions": 132,
+          "changes": 146
+        },
+        {
+          "filename": "python/sglang/jit_kernel/diffusion/triton/norm.py",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 0,
+          "changes": 6
+        },
+        {
+          "filename": "python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 0,
+          "changes": 6
+        },
+        {
+          "filename": "python/sglang/jit_kernel/diffusion/triton/rotary.py",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0,
+          "changes": 5
+        },
+        {
+          "filename": "python/sglang/jit_kernel/diffusion/triton/scale_shift.py",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 0,
+          "changes": 7
+        },
+        {
+          "filename": "python/sglang/jit_kernel/diffusion/triton/torch_fallback.py",
+          "status": "added",
+          "additions": 143,
+          "deletions": 0,
+          "changes": 143
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/distributed/group_coordinator.py",
+          "status": "modified",
+          "additions": 24,
+          "deletions": 7,
+          "changes": 31
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/distributed/parallel_state.py",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/layers/layernorm.py",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 1,
+          "changes": 5
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/loader/component_loaders/text_encoder_loader.py",
+          "status": "modified",
+          "additions": 9,
+          "deletions": 4,
+          "changes": 13
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/managers/cpu_worker.py",
+          "status": "added",
+          "additions": 401,
+          "deletions": 0,
+          "changes": 401
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/managers/scheduler.py",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 1,
+          "changes": 5
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/platforms/cpu.py",
+          "status": "modified",
+          "additions": 26,
+          "deletions": 0,
+          "changes": 26
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/platforms/interface.py",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0,
+          "changes": 2
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/server_args.py",
+          "status": "modified",
+          "additions": 10,
+          "deletions": 1,
+          "changes": 11
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "为 SGLang Diffusion 添加 CPU 平台原生支持（Intel Xeon），包含 OMP 核绑定、NUMA 自动绑定、SDPA attention 等 CPU 算子适配，支持纯 CPU 推理。",
+      "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:26:25Z",
+      "fingerprint": "cb23c7d1391f47428abc65c5553d247e1b272b3fe9460aaf4c1cd389cfedca12"
+    },
+    {
+      "id": "sgl-project/sglang#22869",
+      "repo": "sgl-project/sglang",
+      "number": 22869,
+      "title": "[diffusion] optimize ltx-2.3 offload hot paths",
+      "url": "https://github.com/sgl-project/sglang/pull/22869",
+      "author": "mickqian",
+      "state": "open",
+      "merged": false,
+      "draft": false,
+      "created_at": "2026-04-15T08:37:51Z",
+      "updated_at": "2026-04-17T06:05:46Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "documentation",
+        "lora",
+        "run-ci"
+      ],
+      "body_excerpt": "Modifications One-stage Disable DiT CPU offload by default on high-memory Hopper GPUs Disable VAE CPU offload by default on high-memory Hopper GPUs Two-stage Prebuild and premerge the stage-2 distilled transformer (`transformer_2`, for snapshot and resident mode) Pin the stage-1 transformer on GPU at startup when beneficial Replace request-time `module.to(cpu/cuda)` switching with CPU snapshot based release Fix an initialization regression where CPU snapshots redundantly cloned tensors that were already on CPU Pre-merged LoRA (only applicable for two-stage) when running two-stage pipeline, LoRA will be applied between two denoising stages, this would include: 1. `cuda.synchronize` to wait for ongoing tasks 2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s 3. apply lora (~18.5s) 4. layerwise_offload.offload(): optional, to resume the offload behavior while with new approach `snapshot_release`: 1. h2d (for dit_2), but for dit_1, points `param.data` directly to cpu_snapshot instead of d2h Tradeoffs when pre-merged is enabled, the initial and peak VRAM would increase ~35.37 (literally the dit weight size) Motivation",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "[/_]ltx([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "dit",
+        "ltx",
+        "multimodal_gen/runtime",
+        "vae"
+      ],
+      "optimization_hits": [
+        "latency",
+        "offload",
+        "optimiz",
+        "quant",
+        "resident",
+        "snapshot",
+        "throughput",
+        "vram"
+      ],
+      "benchmark_lines": [
+        "2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s",
+        "3. apply lora (~18.5s)"
+      ],
+      "techniques": [
+        "low-precision-quantization",
+        "memory-offload",
+        "memory-efficiency",
+        "scheduling-throughput"
+      ],
+      "techniques_zh": [
+        "FP8/NVFP4/量化",
+        "Offload/驻留策略",
+        "显存效率",
+        "调度/吞吐优化"
+      ],
+      "technique_hits": {
+        "low-precision-quantization": [
+          "quant",
+          "quantization"
+        ],
+        "memory-offload": [
+          "cpu offload",
+          "module.to",
+          "offload",
+          "resident",
+          "snapshot",
+          "to(cpu"
+        ],
+        "memory-efficiency": [
+          "peak vram",
+          "vram"
+        ],
+        "scheduling-throughput": [
+          "throughput"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "throughput",
+        "memory"
+      ],
+      "impact_axes_zh": [
+        "延迟",
+        "吞吐",
+        "显存"
+      ],
+      "changed_files": [
+        "docs/diffusion/compatibility_matrix.md",
+        "python/sglang/multimodal_gen/runtime/pipelines/ltx_2_pipeline.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/lora_pipeline.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising_av.py",
+        "python/sglang/multimodal_gen/runtime/server_args.py",
+        "python/sglang/multimodal_gen/test/server/perf_baselines.json"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "docs/diffusion/compatibility_matrix.md",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 2,
+          "changes": 7
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines/ltx_2_pipeline.py",
+          "status": "modified",
+          "additions": 292,
+          "deletions": 0,
+          "changes": 292
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/lora_pipeline.py",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising_av.py",
+          "status": "modified",
+          "additions": 28,
+          "deletions": 2,
+          "changes": 30
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/server_args.py",
+          "status": "modified",
+          "additions": 39,
+          "deletions": 0,
+          "changes": 39
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/test/server/perf_baselines.json",
+          "status": "modified",
+          "additions": 16,
+          "deletions": 16,
+          "changes": 32
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。",
+      "evidence_zh": "2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "79768d3827137c2dcafde864ae0bdadc450aff8c97571d6d623861b9d87d71ca"
+    },
+    {
+      "id": "sgl-project/sglang#22814",
       "repo": "sgl-project/sglang",
       "number": 22814,
       "title": "diffusion: add HunyuanVideo GroupNorm+SiLU fast path",
@@ -33,23 +497,104 @@
       "draft": false,
       "created_at": "2026-04-14T15:24:47Z",
       "updated_at": "2026-04-17T01:24:02Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "jit-kernel",
+        "run-ci"
+      ],
+      "body_excerpt": "This PR adds a Triton `GroupNorm + SiLU` fast path for `HunyuanVideoResnetBlockCausal3D` only. It is gated by `SGLANG_USE_CUDA_HUNYUANVIDEO_GROUP_NORM_SILU=1`. H100 (`CUDA_VISIBLE_DEVICES=1`) benchmark on latest `main`: `DenoisingStage`: `41406.19 -> 41582.68 ms` (`+0.4%`) `DecodingStage`: `15514.60 -> 14548.95 ms` (`-6.2%`) `Total`: `57231.73 -> 56447.61 ms` (`-1.4%`) Benchmark command: ```bash CUDA_VISIBLE_DEVICES=1 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True FLASHINFER_DISABLE_VERSION_CHECK=1 SGLANG_USE_CUDA_HUNYUANVIDEO_GROUP_NORM_SILU=1 PYTHONPATH=python sglang generate --model-path=hunyuanvideo-community/HunyuanVideo --prompt=\"A cat and a dog baking a cake together in a kitchen. The cat is carefully measuring flour, while the dog is stirring the batter with a wooden spoon. The kitchen is cozy, with sunlight streaming through the window.\" --log-level=info --seed=42 --text-encoder-cpu-offload --pin-cpu-memory --num-frames=65 --width=848 --height=480 --num-inference-steps=30 --save-output --warmup --enable-torch-compile --perf-dump-path=perf.json ``` Test command: ```bash pre-commit run --color=always --files python/sglang/jit_kernel/diffusion/triton/group_norm_silu.py pyth",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "hunyuanvideo",
+        "multimodal_gen/runtime"
+      ],
+      "optimization_hits": [
+        "compile",
+        "fast path",
+        "offload",
+        "triton"
+      ],
+      "benchmark_lines": [
+        "`DenoisingStage`: `41406.19 -> 41582.68 ms` (`+0.4%`)",
+        "`DecodingStage`: `15514.60 -> 14548.95 ms` (`-6.2%`)"
+      ],
       "techniques": [
-        "kernel-fusion"
+        "kernel-fusion",
+        "memory-offload"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "为 `HunyuanVideoResnetBlockCausal3D` 增加 Triton GroupNorm+SiLU 快路径，减少 3D ResNet 块中的归一化与激活开销。优化主要落在 decoding 阶段。",
-      "evidence_zh": "H100 上总时延 57.23s->56.45s，DecodingStage 15.51s->14.55s。",
-      "status_zh": "open",
       "techniques_zh": [
-        "内核融合/算子快路径"
+        "内核融合/算子快路径",
+        "Offload/驻留策略"
+      ],
+      "technique_hits": {
+        "kernel-fusion": [
+          "fast path",
+          "groupnorm",
+          "silu",
+          "triton"
+        ],
+        "memory-offload": [
+          "offload"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "memory"
       ],
       "impact_axes_zh": [
-        "延迟"
-      ]
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "python/sglang/jit_kernel/diffusion/triton/group_norm_silu.py",
+        "python/sglang/jit_kernel/tests/diffusion/test_group_norm_silu.py",
+        "python/sglang/multimodal_gen/envs.py",
+        "python/sglang/multimodal_gen/runtime/models/vaes/hunyuanvae.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/jit_kernel/diffusion/triton/group_norm_silu.py",
+          "status": "added",
+          "additions": 349,
+          "deletions": 0,
+          "changes": 349
+        },
+        {
+          "filename": "python/sglang/jit_kernel/tests/diffusion/test_group_norm_silu.py",
+          "status": "added",
+          "additions": 109,
+          "deletions": 0,
+          "changes": 109
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/envs.py",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 0,
+          "changes": 6
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/vaes/hunyuanvae.py",
+          "status": "modified",
+          "additions": 28,
+          "deletions": 4,
+          "changes": 32
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "为 HunyuanVideo 的 ResnetBlock 引入 Triton GroupNorm+SiLU 融合 kernel fast path，DecodingStage 延迟降低约 6.2%。",
+      "evidence_zh": "`DenoisingStage`: `41406.19 -> 41582.68 ms` (`+0.4%`)；`DecodingStage`: `15514.60 -> 14548.95 ms` (`-6.2%`)",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "84603421cc98db8b9bede3ad50d99efd9f2392a81e3bf5a42cbf37ad127a5149"
     },
     {
+      "id": "sgl-project/sglang#20434",
       "repo": "sgl-project/sglang",
       "number": 20434,
       "title": "[diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead",
@@ -60,23 +605,106 @@
       "draft": false,
       "created_at": "2026-03-12T08:47:40Z",
       "updated_at": "2026-04-17T01:00:23Z",
+      "closed_at": "2026-04-16T13:06:20Z",
+      "merged_at": null,
+      "labels": [
+        "diffusion"
+      ],
+      "body_excerpt": "Motivation This PR optimizes the Qwen-Image denoising path by batching the serial CFG cond/uncond forward passes into a single model forward. Before this change, each denoising step runs two separate transformer forwards: one for conditional prompt one for unconditional prompt After this change, the two branches are packed into one batch and executed together, then combined with the same CFG formula as before. The code mainly writed by gpt.5.4 high with codex. Why this is equivalent This change does not modify the denoising algorithm itself. The guidance computation remains: `eps = eps_uncond + guidance_scale * (eps_cond - eps_uncond)` The only difference is execution structure: before: `f(cond)` and `f(uncond)` are executed as two separate forwards after: `[f(uncond), f(cond)]` are executed in one batched forward So this is algorithmically equivalent to the original serial CFG path, aside from expected floating-point differences from batching / kernel selection. Why it is faster The main benefit is lower per-step overhead. On the previous path, every denoising step paid the framework / runtime / launch overhead twice because cond and uncond were executed separately. With this chan",
+      "diffusion_hits": [
+        "[/_]qwen[_-]?image([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "dit",
+        "multimodal_gen/runtime",
+        "qwen-image"
+      ],
+      "optimization_hits": [
+        "batch serial",
+        "batched forward",
+        "compile",
+        "faster",
+        "offload",
+        "optimiz",
+        "overhead",
+        "resident",
+        "torch.compile"
+      ],
+      "benchmark_lines": [
+        "[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)",
+        "[03-12 08:39:16] Memory usage - Max peak: 64780.00 MB, Avg peak: 64780.00 MB"
+      ],
       "techniques": [
-        "execution-batching"
+        "torch-compile",
+        "execution-batching",
+        "memory-offload"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "把 Qwen-Image 串行 CFG 的 cond/uncond 两次 transformer forward 合并成一次 batched forward，再按原公式合成 guidance。算法不变，主要减少每步框架与 launch 开销。",
-      "evidence_zh": "50 步 denoising 的单步时间 0.3052s->0.2553s，总 denoising 15.2640s->12.7667s。",
-      "status_zh": "closed-unmerged",
       "techniques_zh": [
-        "执行批处理/前向合批"
+        "torch.compile 编译",
+        "执行批处理/前向合批",
+        "Offload/驻留策略"
+      ],
+      "technique_hits": {
+        "torch-compile": [
+          "torch.compile"
+        ],
+        "execution-batching": [
+          "batch serial",
+          "batched forward",
+          "cond/uncond",
+          "serial cfg"
+        ],
+        "memory-offload": [
+          "offload",
+          "resident"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "memory"
       ],
       "impact_axes_zh": [
-        "延迟"
-      ]
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/configs/pipeline_configs/base.py",
+        "python/sglang/multimodal_gen/configs/pipeline_configs/qwen_image.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/configs/pipeline_configs/base.py",
+          "status": "modified",
+          "additions": 3,
+          "deletions": 0,
+          "changes": 3
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/configs/pipeline_configs/qwen_image.py",
+          "status": "modified",
+          "additions": 110,
+          "deletions": 13,
+          "changes": 123
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+          "status": "modified",
+          "additions": 58,
+          "deletions": 2,
+          "changes": 60
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。",
+      "evidence_zh": "[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)；[03-12 08:39:16] Me",
+      "status_zh": "closed-unmerged",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "65e47070a195174621bfd0d0f8c8a04db9b2cadc50b34cd8498eeea3fd2f06ab"
     },
     {
+      "id": "sgl-project/sglang#19876",
       "repo": "sgl-project/sglang",
       "number": 19876,
       "title": "[Diffusion] Diffusion support cuda graph",
@@ -87,79 +715,126 @@
       "draft": true,
       "created_at": "2026-03-04T12:31:13Z",
       "updated_at": "2026-04-17T01:00:22Z",
+      "closed_at": "2026-04-16T13:07:19Z",
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "documentation"
+      ],
+      "body_excerpt": "main with torch compile: ```shell sglang generate --model-path=black-forest-labs/FLUX.1-dev --prompt=\"A futuristic cyberpunk city at night, neon lights reflecting on wet streets, highly detailed, 8k\" --width=1024 --height=1024 --num-inference-steps=50 --guidance-scale=4.0 --seed=42 --save-output --warmup=True --enable-torch-compile 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 50/50 [00:06<00:00, 7.25it/s] [03-04 03:52:28] [DenoisingStage] average time per step: 0.1379 seconds [03-04 03:52:28] [DenoisingStage] finished in 6.8999 seconds [03-04 03:52:28] [DecodingStage] started... [03-04 03:52:28] [DecodingStage] finished in 0.0307 seconds [03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workload): ['text_encoder', 'text_encoder_2', 'transformer']. Related offload server args to disable: --dit-cpu-offload, --text-encoder-cpu-offload [03-04 03:52:29] Output saved to outputs/A_futuristic_cyberpunk_city_at_night_neon_lights_reflecting_on_we",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "dit",
+        "flux",
+        "multimodal_gen/runtime"
+      ],
+      "optimization_hits": [
+        "compile",
+        "cuda graph",
+        "cudagraph",
+        "offload",
+        "overhead",
+        "resident"
+      ],
+      "benchmark_lines": [
+        "[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa",
+        "[03-04 03:52:29] Memory usage - Max peak: 32268.00 MB, Avg peak: 32268.00 MB"
+      ],
       "techniques": [
-        "cuda-graph"
+        "cuda-graph",
+        "memory-offload",
+        "cache-reuse"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "把 CUDA Graph 预捕获扩展到通用 diffusion/FLUX 路径，通过预捕获 CFG positive graph 减少 kernel 间空洞。优化很直接，主要作用在 denoising 的 host launch 开销。",
-      "evidence_zh": "FLUX.1-dev 50 步里单步 0.1495s->0.1449s，Pixel data 总时长 17.61s->15.02s。",
-      "status_zh": "closed-unmerged",
       "techniques_zh": [
-        "CUDA Graph 图捕获"
+        "CUDA Graph 图捕获",
+        "Offload/驻留策略",
+        "缓存复用"
       ],
-      "impact_axes_zh": [
-        "延迟"
-      ]
-    },
-    {
-      "repo": "sgl-project/sglang",
-      "number": 22869,
-      "title": "[diffusion] optimize ltx-2.3 offload hot paths",
-      "url": "https://github.com/sgl-project/sglang/pull/22869",
-      "author": "mickqian",
-      "state": "open",
-      "merged": false,
-      "draft": false,
-      "created_at": "2026-04-15T08:37:51Z",
-      "updated_at": "2026-04-17T00:44:26Z",
-      "techniques": [
-        "memory-offload"
-      ],
+      "technique_hits": {
+        "cuda-graph": [
+          "cuda graph",
+          "cudagraph"
+        ],
+        "memory-offload": [
+          "offload",
+          "resident"
+        ],
+        "cache-reuse": [
+          "lru"
+        ]
+      },
       "impact_axes": [
         "latency",
         "memory"
       ],
-      "summary_zh": "围绕 LTX-2.3 两阶段管线，减少 DiT/VAE 的 CPU offload 和请求期 `module.to(cpu/cuda)` 切换，新增 snapshot/resident 模式与预合并 stage-2 transformer。重点是把权重搬运和 LoRA 切换的同步开销从请求路径里移走。",
-      "evidence_zh": "同一条链路下 e2e 从 legacy 33.93s 降到 snapshot 30.16s，再到 resident 21.42s；resident 模式显存峰值提升到约 99.31GB。",
-      "status_zh": "open",
-      "techniques_zh": [
-        "Offload/驻留策略"
-      ],
       "impact_axes_zh": [
         "延迟",
         "显存"
-      ]
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/.claude/skills/diffusion-kernel/diffusion-benchmark-and-profile.md",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/composed_pipeline_base.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/__init__.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/cuda_graph_preparation.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+        "python/sglang/multimodal_gen/runtime/server_args.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/.claude/skills/diffusion-kernel/diffusion-benchmark-and-profile.md",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 1,
+          "changes": 2
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/composed_pipeline_base.py",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 1,
+          "changes": 7
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/__init__.py",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0,
+          "changes": 4
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/cuda_graph_preparation.py",
+          "status": "added",
+          "additions": 66,
+          "deletions": 0,
+          "changes": 66
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+          "status": "modified",
+          "additions": 489,
+          "deletions": 1,
+          "changes": 490
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/server_args.py",
+          "status": "modified",
+          "additions": 22,
+          "deletions": 0,
+          "changes": 22
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。",
+      "evidence_zh": "[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa；[03-04 03:52:29] Me",
+      "status_zh": "closed-unmerged",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "0ec8b741193ffb6430b1012db71819d3869e545d2a1de1dd50269995196d60c3"
     },
     {
-      "repo": "sgl-project/sglang",
-      "number": 22786,
-      "title": "[AMD][diffusion] Add FlyDSL fused normalization kernels for ROCm diffusion models optimization",
-      "url": "https://github.com/sgl-project/sglang/pull/22786",
-      "author": "yctseng0211",
-      "state": "open",
-      "merged": false,
-      "draft": true,
-      "created_at": "2026-04-14T09:59:03Z",
-      "updated_at": "2026-04-16T16:08:26Z",
-      "techniques": [
-        "kernel-fusion"
-      ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "在 ROCm diffusion 路径里引入 FlyDSL 融合归一化、scale/shift 和 GeLU 快路径，并保留 shape、dtype、import 三类回退逻辑。核心目标是压缩 denoising 热路径上的 norm/modulation kernel 数量。",
-      "evidence_zh": "Wan2.2 T2V 在 MI355X 上无 compile 总时延 143.41s->138.70s；compile 场景 131.60s->129.28s，denoising 子阶段改善更明显。",
-      "status_zh": "open",
-      "techniques_zh": [
-        "内核融合/算子快路径"
-      ],
-      "impact_axes_zh": [
-        "延迟"
-      ]
-    },
-    {
+      "id": "sgl-project/sglang#22445",
       "repo": "sgl-project/sglang",
       "number": 22445,
       "title": "[NPU] [Diffusion] Performance Optimization for LTX-2 Model",
@@ -170,23 +845,66 @@
       "draft": false,
       "created_at": "2026-04-09T11:39:18Z",
       "updated_at": "2026-04-15T03:48:27Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion"
+      ],
+      "body_excerpt": "Motivation This PR reduces E2E latency by approximately 27% on NPU and 3% on GPU. Before merging, ensure that PR https://github.com/sgl-project/sgl-kernel-npu/pull/431 has been successfully merged. Modifications 1. Replace torch.nn.RMSNorm with custom RMSNorm. 2. Integrate fused_rmsnorm_without_weight from sgl_kernel_npu. 3. Set the mask to None when it consists entirely of ones to prevent FlashAttention (FA) from degrading into smaller, less efficient operators. Test Script ``` shell NPU sglang generate --model-path /home/weights/LTX-2/ --prompt \"A beautiful sunset over the ocean\" --sp-degree 2 --num-gpus 2 --warmup true GPU sglang generate --model-path /home/weight/LTX-2/ --prompt \"A beautiful sunset over the ocean\" --num-gpus 1 --warmup true ``` ACC Tests before: ![1](https://github.com/user-attachments/assets/22014b5e-0581-43d6-aed8-7b0472c163d7) after: ![2](https://github.com/user-attachments/assets/17d9ba96-08a4-421e-8350-d7e47b574f34) Speed Tests and Profiling NPU： E2E before the pr: 102.74s E2E after the pr: 75.69s GPU： E2E before the pr: 136.62s E2E after the pr: 131.70s Checklist [ ] Format your code according to the [Format code with pre-commit](https://docs.sglang.io/de",
+      "diffusion_hits": [
+        "[/_]ltx([/_.-]|$)",
+        "diffusion",
+        "ltx",
+        "multimodal_gen/runtime"
+      ],
+      "optimization_hits": [
+        "latency",
+        "optimiz"
+      ],
+      "benchmark_lines": [
+        "This PR reduces E2E latency by approximately 27% on NPU and 3% on GPU.",
+        "E2E before the pr: 102.74s"
+      ],
       "techniques": [
         "kernel-fusion"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "给 LTX-2 换成 custom RMSNorm 与 NPU 融合 RMSNorm，并在全 1 mask 情况下绕过低效 attention 路径。收益主要来自归一化与 attention 前处理热路径的收缩。",
-      "evidence_zh": "E2E 在 NPU 上 102.74s->75.69s，在 GPU 上 136.62s->131.70s。",
-      "status_zh": "open",
       "techniques_zh": [
         "内核融合/算子快路径"
       ],
+      "technique_hits": {
+        "kernel-fusion": [
+          "fused",
+          "rmsnorm"
+        ]
+      },
+      "impact_axes": [
+        "latency"
+      ],
       "impact_axes_zh": [
         "延迟"
-      ]
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/runtime/models/dits/ltx_2.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/ltx_2.py",
+          "status": "modified",
+          "additions": 23,
+          "deletions": 4,
+          "changes": 27
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "替换 LTX-2 中 torch.nn.RMSNorm 为自定义融合算子并集成 fused_rmsnorm，NPU 上 E2E 延迟降低约 27%，GPU 上降低约 3%。",
+      "evidence_zh": "This PR reduces E2E latency by approximately 27% on NPU and 3% on GPU.；E2E before the pr: 102.74s",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "78c816a3b46edf2a5feef7a2e9e55edde7d03ac7678490917773f5406469e00e"
     },
     {
+      "id": "sgl-project/sglang#18764",
       "repo": "sgl-project/sglang",
       "number": 18764,
       "title": "[diffusion] Add dynamic batching v0",
@@ -197,25 +915,148 @@
       "draft": false,
       "created_at": "2026-02-13T02:26:25Z",
       "updated_at": "2026-04-15T01:47:51Z",
-      "techniques": [
-        "scheduling-throughput"
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "npu"
       ],
-      "impact_axes": [
+      "body_excerpt": "Motivation 18594 Modifications Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P99 latency. Currently does not support i2i/edits/i2v, just prompt-only diffusion requests (t2i, t2v). Benchmarking and Profiling 1x NVIDIA H100 80GB Results (64 prompts): | Model | Throughput Baseline (req/s) | Throughput Dynamic (req/s) | Δ (%) | Mean Lat Baseline (s) | Mean Lat Dynamic (s) | Δ (%) | P99 Baseline (s) | P99 Dynamic (s) | Δ (%) | Duration Baseline (s) | Duration Dynamic (s) | Δ (%) | Peak Mem Baseline (MB) | Peak Mem Dynamic (MB) | Δ (%) | |-------------------------------------|--------------------------|-----------------------------|--------|-------------------|-----------------------|--------|--------------|------------------|--------|-------------------|-----------------------|--------|---------------------|------------------------|--------| | Tongyi-MAI/Z-Image-Turbo | 0.377 | 0.395 | +4.7% | 10.351 | 9.960 | -3.8% | 13.267 | 10.358 | -21.9% | 169.581 | 161.984 | -4.5% | 20388.42 | 22215.95 | +9.0% | | black-forest-",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "diffusion",
+        "diffusion_",
+        "dit",
+        "flux",
+        "multimodal_gen/runtime",
+        "qwen-image",
+        "text-to-image",
+        "z-image"
+      ],
+      "optimization_hits": [
+        "dynamic batching",
         "latency",
+        "offload",
+        "overhead",
+        "p99",
         "throughput"
       ],
-      "summary_zh": "给 diffusion scheduler 增加动态 batching（max batch size + delay），在不改模型算法的前提下提高 serving 吞吐并压低尾延迟。适用范围目前是 prompt-only 的 t2i/t2v。",
-      "evidence_zh": "H100 上 Qwen-Image 吞吐 +29.6%，mean latency -22.4%，P99 -31.8%。",
-      "status_zh": "open",
+      "benchmark_lines": [
+        "Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P",
+        "| Model | Throughput Baseline (req/s) | Throughput Dynamic (req/s) | Δ (%) | Mean Lat Baseline (s) | Mean Lat Dynamic (s) | Δ (%) | P99 Baseline (s) | P99 Dynamic (s) | Δ (%) | Duration Baseline (s) | Duration Dynamic (s"
+      ],
+      "techniques": [
+        "memory-offload",
+        "memory-efficiency",
+        "scheduling-throughput"
+      ],
       "techniques_zh": [
+        "Offload/驻留策略",
+        "显存效率",
         "调度/吞吐优化"
+      ],
+      "technique_hits": {
+        "memory-offload": [
+          "offload"
+        ],
+        "memory-efficiency": [
+          "num_outputs_per_prompt"
+        ],
+        "scheduling-throughput": [
+          "dynamic batching",
+          "max batch size",
+          "p99",
+          "throughput"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "throughput",
+        "memory"
       ],
       "impact_axes_zh": [
         "延迟",
-        "吞吐"
-      ]
+        "吞吐",
+        "显存"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/configs/sample/sampling_params.py",
+        "python/sglang/multimodal_gen/runtime/entrypoints/diffusion_generator.py",
+        "python/sglang/multimodal_gen/runtime/entrypoints/openai/utils.py",
+        "python/sglang/multimodal_gen/runtime/managers/gpu_worker.py",
+        "python/sglang/multimodal_gen/runtime/managers/scheduler.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/input_validation.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/text_encoding.py",
+        "python/sglang/multimodal_gen/runtime/server_args.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/configs/sample/sampling_params.py",
+          "status": "modified",
+          "additions": 35,
+          "deletions": 18,
+          "changes": 53
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/entrypoints/diffusion_generator.py",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 1,
+          "changes": 7
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/entrypoints/openai/utils.py",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 1,
+          "changes": 7
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/managers/gpu_worker.py",
+          "status": "modified",
+          "additions": 31,
+          "deletions": 3,
+          "changes": 34
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/managers/scheduler.py",
+          "status": "modified",
+          "additions": 581,
+          "deletions": 56,
+          "changes": 637
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/input_validation.py",
+          "status": "modified",
+          "additions": 19,
+          "deletions": 1,
+          "changes": 20
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/text_encoding.py",
+          "status": "modified",
+          "additions": 30,
+          "deletions": 3,
+          "changes": 33
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/server_args.py",
+          "status": "modified",
+          "additions": 28,
+          "deletions": 0,
+          "changes": 28
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。",
+      "evidence_zh": "Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P；| Model | Throughpu",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "23aec28f6400a9e9861ea99b68bf7974d41bcaa2fa289dfdebd664d9832caa8d"
     },
     {
+      "id": "sgl-project/sglang#22805",
       "repo": "sgl-project/sglang",
       "number": 22805,
       "title": "[diffusion] comms: Pack QKV for a2a in Flux2",
@@ -226,23 +1067,97 @@
       "draft": false,
       "created_at": "2026-04-14T13:10:47Z",
       "updated_at": "2026-04-14T13:12:36Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion"
+      ],
+      "body_excerpt": "Motivation Currently, in USP we do three separate all2all calls for Q,K and V. Depending on the model, it is more efficient to pack them together and run a single all2all call and split them afterwards. I've tested this with FLUX.2 and FLUX.1. The latter does not benefit from this. Modifications Add `_usp_input_all_to_all_packed_qkv` function that packs the QKV prior to comms and unpacks them afterwards Enable packing for Flux2 attention Accuracy Tests *Before:** <img width=\"1024\" height=\"1024\" alt=\"Add_a_cool_hat_to_the_cat_20260414-083932_3a41835b\" src=\"https://github.com/user-attachments/assets/81b231ff-6eab-40cd-8535-d61a77d9355b\" /> *After:** <img width=\"1024\" height=\"1024\" alt=\"Add_a_cool_hat_to_the_cat_20260414-084237_c72b561e\" src=\"https://github.com/user-attachments/assets/fe5933d6-cf58-4452-818d-3e7ca0239838\" /> Speed Tests and Profiling *8xB200, 1024x1024**: 1. High-level Summary | Metric | Baseline | New | Diff | Status | | :--- | :--- | :--- | :--- | :--- | | **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ | | **Throughput** | 0.21 req/s | 0.21 req/s | - | - | 2. Stage Breakdown | Stage Name | Baseline (ms) | New (ms) | Diff (ms) | Diff (%) | Sta",
+      "diffusion_hits": [
+        "[/_]flux([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "flux",
+        "flux_",
+        "multimodal_gen/runtime"
+      ],
+      "optimization_hits": [
+        "a2a",
+        "all-to-all",
+        "latency",
+        "pack qkv",
+        "throughput"
+      ],
+      "benchmark_lines": [
+        "| **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ |",
+        "| DenoisingStage | 4523.43 | 4432.28 | -91.15 | -2.0% | ⚪️ |"
+      ],
       "techniques": [
-        "communication"
+        "communication",
+        "scheduling-throughput"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "在 Flux2 的 USP attention 中把 Q/K/V 三次 all-to-all 合并成一次打包通信，减少多 GPU 通信调用和拆分开销。收益集中在 denoising 通信热段。",
-      "evidence_zh": "8xB200 与 8xMI355X 的 1024/2048 分辨率测试中，DenoisingStage 约下降 0.7%-2.0%，总体延迟下降约 0.5%-1.8%。",
-      "status_zh": "open",
       "techniques_zh": [
-        "通信优化"
+        "通信优化",
+        "调度/吞吐优化"
+      ],
+      "technique_hits": {
+        "communication": [
+          "a2a",
+          "all-to-all",
+          "collective",
+          "comms",
+          "pack qkv"
+        ],
+        "scheduling-throughput": [
+          "throughput"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "throughput"
       ],
       "impact_axes_zh": [
-        "延迟"
-      ]
+        "延迟",
+        "吞吐"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/runtime/layers/attention/layer.py",
+        "python/sglang/multimodal_gen/runtime/layers/usp.py",
+        "python/sglang/multimodal_gen/runtime/models/dits/flux_2.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/layers/attention/layer.py",
+          "status": "modified",
+          "additions": 23,
+          "deletions": 9,
+          "changes": 32
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/layers/usp.py",
+          "status": "modified",
+          "additions": 70,
+          "deletions": 0,
+          "changes": 70
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/flux_2.py",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0,
+          "changes": 2
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "将 FLUX.2 USP 中 Q/K/V 的三次独立 all-to-all 通信合并为一次 pack 后的单次 all-to-all，DenoisingStage 延迟降低约 2.0%。",
+      "evidence_zh": "| **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ |；| DenoisingStage | 4523.43 | 4432.28 | -91.15 | -2.0% | ⚪️ |",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "58a556c4a30519581c1db62d23a059224dcc9c7bc7fa05ed6fac5d2186eed87e"
     },
     {
+      "id": "sgl-project/sglang#22183",
       "repo": "sgl-project/sglang",
       "number": 22183,
       "title": "[Diffusion] Sequential Per-Output Execution for Multi-Output Diffusion Generation",
@@ -253,23 +1168,135 @@
       "draft": false,
       "created_at": "2026-04-06T10:36:58Z",
       "updated_at": "2026-04-12T15:01:24Z",
-      "techniques": [
-        "memory-efficiency"
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion"
       ],
+      "body_excerpt": "Motivation The current multi-output generation (controlled by `num_outputs_per_prompt`) assembles all outputs into a single batch at the denoising stage level. While functional for a few models (e.g., Flux, Wan-T2V), this approach has three significant problems( thanks to @MikukuOvO ): 1. **Poor model generalization.** Every model must be individually adapted to handle batched multi-output execution inside its denoising loop. Models that were not explicitly modified fail in various ways: Qwen-Image — text/latent batch dimension mismatch. Z-Image — model code hardcodes single-sample assumptions. Hunyuan3D — code explicitly rejects batch size > 1. Helios / GLM-Image — `batch_size=1` is hardcoded throughout; the entire processing path never accounts for batch > 1 and would require a full rewrite to support it. 2. **Excessive memory consumption.** Internal batch size equals `num_outputs_per_prompt`, linearly scaling activation memory. This causes OOM in RL rollout scenarios that require many outputs, while providing no throughput benefit since denoising is already compute-bound on a single sample. 3. **Training–inference inconsistency risk in RL.** Running with `batch_size = N` during ",
+      "diffusion_hits": [
+        "denois",
+        "diffusion",
+        "dit",
+        "flux",
+        "multimodal_gen/runtime",
+        "qwen-image",
+        "vae",
+        "wan",
+        "z-image"
+      ],
+      "optimization_hits": [
+        "oom",
+        "overhead",
+        "peak memory",
+        "throughput",
+        "vram"
+      ],
+      "benchmark_lines": [
+        "| DiT time | 15.2041 s | 15.4286 s | +1.4% |",
+        "| Peak GPU memory | 57,104 MB | **32,042 MB** | **↓ 43.9%** |"
+      ],
+      "techniques": [
+        "memory-efficiency",
+        "scheduling-throughput"
+      ],
+      "techniques_zh": [
+        "显存效率",
+        "调度/吞吐优化"
+      ],
+      "technique_hits": {
+        "memory-efficiency": [
+          "num_outputs_per_prompt",
+          "oom",
+          "peak memory",
+          "peak vram",
+          "sequential per-output",
+          "vram"
+        ],
+        "scheduling-throughput": [
+          "throughput"
+        ]
+      },
       "impact_axes": [
+        "latency",
+        "throughput",
         "memory"
       ],
-      "summary_zh": "把 `num_outputs_per_prompt` 从 denoising 内部大 batch 改成执行器层的 sequential per-output，解决多输出时 OOM 和模型不兼容问题。这个 PR 主要优化的是显存占用而非单次速度。",
-      "evidence_zh": "4 输出 FLUX 测试里 DiT 时间基本持平，但峰值显存 57.10GB->32.04GB。",
-      "status_zh": "open",
-      "techniques_zh": [
-        "显存效率"
-      ],
       "impact_axes_zh": [
+        "延迟",
+        "吞吐",
         "显存"
-      ]
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/runtime/pipelines_core/executors/parallel_executor.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/executors/pipeline_executor.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/base.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/decoding.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/latent_preparation.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/model_specific_stages/glm_image.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/executors/parallel_executor.py",
+          "status": "modified",
+          "additions": 39,
+          "deletions": 2,
+          "changes": 41
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/executors/pipeline_executor.py",
+          "status": "modified",
+          "additions": 102,
+          "deletions": 0,
+          "changes": 102
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/base.py",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0,
+          "changes": 5
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/decoding.py",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0,
+          "changes": 5
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+          "status": "modified",
+          "additions": 6,
+          "deletions": 0,
+          "changes": 6
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/latent_preparation.py",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0,
+          "changes": 5
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/model_specific_stages/glm_image.py",
+          "status": "modified",
+          "additions": 4,
+          "deletions": 0,
+          "changes": 4
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "将多输出 diffusion 生成从全量 batch 改为逐输出顺序执行，峰值显存从 57GB 降至 32GB（降幅 43.9%），DiT 时间几乎不变。",
+      "evidence_zh": "| DiT time | 15.2041 s | 15.4286 s | +1.4% |；| Peak GPU memory | 57,104 MB | **32,042 MB** | **↓ 43.9%** |",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "b21b79ca4a600fc15088afae5f0548a2d71eade8ad487ebadb7a808476aa4c59"
     },
     {
+      "id": "sgl-project/sglang#22441",
       "repo": "sgl-project/sglang",
       "number": 22441,
       "title": "[diffusion] Cache LTX-2 RoPE coords to avoid per-step recompute",
@@ -280,23 +1307,74 @@
       "draft": false,
       "created_at": "2026-04-09T09:50:39Z",
       "updated_at": "2026-04-12T14:44:54Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "run-ci"
+      ],
+      "body_excerpt": "Motivation Before: LTX-2 denoising loop rebuilt video_coords/audio_coords every step. After: Introduced `LTX2AVDenoisingStage._get_ltx2_coords()` with an LRU cache. Cache key includes model id, device, batch sizes, num_frames, height/width, fps, audio frames, and SP rank/world size to ensure correctness. Reused coords across denoising steps; bounded cache size to prevent growth. Modifications Accuracy Tests Speed Tests and Profiling 1xA800, Script: ```bash sglang generate \\ -model-path LTX-2 \\ -pipeline-class-name LTX2TwoStagePipeline \\ -prompt \"A beautiful sunset over the ocean\" \\ -negative-prompt \"shaky, glitchy, low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly, transition, static.\" \\ -width 1536 \\ -height 1024 \\ -num-frames 121 \\ -fps 24 \\ -seed 1234 \\ -enable-torch-compile \\ -warmup \\ -save-output \\ -num-gpus 1 \\ ``` Before ``` [04-09 09:18:51] [LTX2AVDenoisingStage] average time per step: 2.3484 seconds [04-09 09:18:51] [LTX2AVDenoisingStage] finished in 93.9420 seconds ``` https://github.com/user-attachments/assets/f08f6292-6baf-418e-a550-7e4147de6caf After ``` [04-09 09:10:42] [LTX2AVDen",
+      "diffusion_hits": [
+        "denois",
+        "diffusion",
+        "ltx",
+        "multimodal_gen/runtime"
+      ],
+      "optimization_hits": [
+        "cache",
+        "compile",
+        "fused",
+        "lru"
+      ],
+      "benchmark_lines": [],
       "techniques": [
+        "kernel-fusion",
         "cache-reuse"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "对 LTX-2 音视频 denoising 阶段中每步重复构造的 video/audio RoPE 坐标做 LRU 缓存，把与分辨率、帧数相关但跨步不变的准备工作移出循环。属于典型的 per-step 常量复用优化。",
-      "evidence_zh": "A800 上单步 2.3484s->2.1664s，整段 denoising 93.94s->86.66s。",
-      "status_zh": "open",
       "techniques_zh": [
+        "内核融合/算子快路径",
         "缓存复用"
       ],
+      "technique_hits": {
+        "kernel-fusion": [
+          "fused"
+        ],
+        "cache-reuse": [
+          "lru",
+          "reuse",
+          "rope coords"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "memory"
+      ],
       "impact_axes_zh": [
-        "延迟"
-      ]
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising_av.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising_av.py",
+          "status": "modified",
+          "additions": 91,
+          "deletions": 5,
+          "changes": 96
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "为 LTX-2 denoising 循环引入 RoPE 坐标 LRU 缓存，避免每步重复构造 video/audio coords，减少重复计算开销。",
+      "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "a13daf6951f3e04f8d34c9ad74fec7c9e2017718d124b43846acf8c9e727614a"
     },
     {
+      "id": "sgl-project/sglang#21742",
       "repo": "sgl-project/sglang",
       "number": 21742,
       "title": "[diffusion] attention: add support for hybrid attention schedule",
@@ -307,23 +1385,103 @@
       "draft": false,
       "created_at": "2026-03-31T07:39:30Z",
       "updated_at": "2026-04-08T08:07:26Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion"
+      ],
+      "body_excerpt": "Motivation Some attention backends trade accuracy in favor of performance. Often the accuracy trade-off is too much and you start seeing artifacts in the output, e.g some FP8 attention backends on both NV and AMD environments. This accuracy trade off can be mitigated by not running the full model in lower precision. Instead, the first and last X diffusion steps are ran using high precision attention backends, while the middle steps are in low precision. For certain models this is the best compromise - you get a significant performance boost as you can spend the majority of the steps in low precision but keep the output quality artifact free. Any criticism, changes etc. required are welcome! Modifications This PR adds two things: 1. A hybrid attention schedule. Given a schedule in the format `<high_precision_attn_backend>:<low_precision_attn_backend>:<num_high_start_steps>:<num_high_end_steps>`, e.g. `fa:sdpa:3:3`, a schedule is created that can determine which backend should be used. 2. Based on the above schedule, the backend in use is swapped during the diffusion loop. Accuracy Tests An example of this can be seen in the output videos available in #21856 . Benchmarking and Profil",
+      "diffusion_hits": [
+        "denois",
+        "diffusion",
+        "multimodal_gen/runtime"
+      ],
+      "optimization_hits": [
+        "cache",
+        "fp8"
+      ],
+      "benchmark_lines": [
+        "| DenoisingStage | 158981.35 | 138116.00 | -20865.35 | -13.1% | 🟢 |",
+        "| DenoisingStage | 158981.35 | 140662.09 | -18319.26 | -11.5% | 🟢 |"
+      ],
       "techniques": [
-        "attention-backend"
+        "low-precision-quantization",
+        "attention-backend",
+        "cache-reuse"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "引入 hybrid attention schedule，在扩散前后若干步使用高精后端，中间步切到更快的低精后端，以降低 artifacts 同时保留大部分性能收益。",
-      "evidence_zh": "Wan2.2 T2V 上，相比纯 AITER 基线，hybrid 调度的 DenoisingStage 下降约 11.5%。",
-      "status_zh": "open",
       "techniques_zh": [
-        "注意力后端/精度调度"
+        "FP8/NVFP4/量化",
+        "注意力后端/精度调度",
+        "缓存复用"
+      ],
+      "technique_hits": {
+        "low-precision-quantization": [
+          "fp8"
+        ],
+        "attention-backend": [
+          "aiter",
+          "attention backend",
+          "attention schedule",
+          "hybrid attention"
+        ],
+        "cache-reuse": [
+          "cache-dit"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "memory"
       ],
       "impact_axes_zh": [
-        "延迟"
-      ]
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/runtime/layers/attention/hybrid_schedule.py",
+        "python/sglang/multimodal_gen/runtime/layers/attention/layer.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+        "python/sglang/multimodal_gen/runtime/server_args.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/layers/attention/hybrid_schedule.py",
+          "status": "added",
+          "additions": 110,
+          "deletions": 0,
+          "changes": 110
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/layers/attention/layer.py",
+          "status": "modified",
+          "additions": 107,
+          "deletions": 1,
+          "changes": 108
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+          "status": "modified",
+          "additions": 5,
+          "deletions": 0,
+          "changes": 5
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/server_args.py",
+          "status": "modified",
+          "additions": 22,
+          "deletions": 0,
+          "changes": 22
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "引入混合 attention schedule，允许部分 denoising 步使用 FP8 attention、其余步使用高精度 backend，兼顾质量与速度。DenoisingStage 延迟降低 11-13%。",
+      "evidence_zh": "| DenoisingStage | 158981.35 | 138116.00 | -20865.35 | -13.1% | 🟢 |；| DenoisingStage | 158981.35 | 140662.09 | -18319.26 | -11.5% | 🟢 |",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "8a420076f964cea452a2965b0613fe6427534f633555abd9f5c4b01d0cd229b8"
     },
     {
+      "id": "sgl-project/sglang#21912",
       "repo": "sgl-project/sglang",
       "number": 21912,
       "title": "[diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph ",
@@ -334,56 +1492,211 @@
       "draft": false,
       "created_at": "2026-04-02T05:46:41Z",
       "updated_at": "2026-04-02T16:16:32Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "run-ci"
+      ],
+      "body_excerpt": "Motivation Z-Image-Turbo's existing FP8 quantization only covers QKV/O attention projections, leaving FFN (SwiGLU) layers in BF16. Since FFN GEMMs account for a significant portion of denoising compute, quantizing only attention yields limited speedup. Additionally, after full FP8 quantization, GPU kernels become fast enough that CPU-side kernel launch overhead dominates at small resolutions (e.g., 256×256). CUDA Graph capture eliminates this overhead by replaying the entire `dit.forward()` from a single `cudaGraphLaunch()` call. This PR: 1. Enables **full FP8 quantization** for Z-Image-Turbo (attention + FFN), fixing 4 bugs that previously caused FP8 `weight_scale_inv` to be silently dropped during FFN loading. 2. Adds a **CUDA Graph runner** for diffusion denoising to eliminate kernel launch overhead, with cache-dit compatibility. Please note that the two current CUDA Graph schemes (whole graph and step-level graph) support only the FA attention backend. This is because, in scenarios involving the generation of small images, attention computation does not constitute a performance bottleneck. The GPU kernel time statistics for an image size of 256x256 are as follows: | Category | ",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "[/_]z[_-]?image([/_.-]|$)",
+        "cache-dit",
+        "denois",
+        "diffusion",
+        "diffusion_",
+        "dit",
+        "multimodal_gen/configs/models",
+        "multimodal_gen/runtime",
+        "vae",
+        "z-image",
+        "zimage"
+      ],
+      "optimization_hits": [
+        "cache",
+        "compile",
+        "cuda graph",
+        "cudagraph",
+        "fp8",
+        "kernel launch",
+        "latency",
+        "overhead",
+        "quant",
+        "speedup",
+        "torch.compile",
+        "triton"
+      ],
+      "benchmark_lines": [],
       "techniques": [
+        "kernel-fusion",
+        "cuda-graph",
+        "torch-compile",
         "low-precision-quantization",
-        "cuda-graph"
+        "attention-backend",
+        "cache-reuse"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "给 Z-Image-Turbo 做完整 FP8 量化（attention+FFN）并接入 whole/step-level CUDA Graph，顺带修复 FFN FP8 scale 丢失等加载问题。组合目标是同时压缩 GEMM 成本和 host 发射开销。",
-      "evidence_zh": "H20 上 1024x1024 的 E2E 3607.24ms->1837.81ms；512x512 为 923.06ms->504.06ms。",
-      "status_zh": "open",
       "techniques_zh": [
+        "内核融合/算子快路径",
+        "CUDA Graph 图捕获",
+        "torch.compile 编译",
         "FP8/NVFP4/量化",
-        "CUDA Graph 图捕获"
+        "注意力后端/精度调度",
+        "缓存复用"
       ],
-      "impact_axes_zh": [
-        "延迟"
-      ]
-    },
-    {
-      "repo": "sgl-project/sglang",
-      "number": 21573,
-      "title": "Add persistent diffusion workspace reuse and extend random benchmarks for image-conditioned tasks",
-      "url": "https://github.com/sgl-project/sglang/pull/21573",
-      "author": "jy-song-hub",
-      "state": "open",
-      "merged": false,
-      "draft": false,
-      "created_at": "2026-03-27T23:38:36Z",
-      "updated_at": "2026-04-01T23:41:03Z",
-      "techniques": [
-        "cache-reuse",
-        "memory-efficiency"
-      ],
+      "technique_hits": {
+        "kernel-fusion": [
+          "fused",
+          "kernel launch",
+          "rmsnorm",
+          "triton"
+        ],
+        "cuda-graph": [
+          "cuda graph",
+          "cudagraph",
+          "graph capture"
+        ],
+        "torch-compile": [
+          "torch.compile"
+        ],
+        "low-precision-quantization": [
+          "fp8",
+          "quant",
+          "quantization"
+        ],
+        "attention-backend": [
+          "attention backend"
+        ],
+        "cache-reuse": [
+          "cache-dit"
+        ]
+      },
       "impact_axes": [
         "latency",
         "memory"
       ],
-      "summary_zh": "在多个 diffusion denoising loop 里复用 persistent workspace，避免每步重复分配临时 buffer。它属于低风险的 allocator/temporary tensor 开销优化。",
-      "evidence_zh": "H200 单卡测试里，Wan DMD、Flux.2 与 Helios 都有小幅平均延迟或 P99 改善，并在部分模型上略降峰值显存。",
-      "status_zh": "open",
-      "techniques_zh": [
-        "缓存复用",
-        "显存效率"
-      ],
       "impact_axes_zh": [
         "延迟",
         "显存"
-      ]
+      ],
+      "changed_files": [
+        "examples/profiler/nsys_profile_tools/sglang_engine_model.json",
+        "python/sglang/multimodal_gen/configs/models/dits/zimage.py",
+        "python/sglang/multimodal_gen/envs.py",
+        "python/sglang/multimodal_gen/runtime/layers/linear.py",
+        "python/sglang/multimodal_gen/runtime/managers/diffusion_cuda_graph_runner.py",
+        "python/sglang/multimodal_gen/runtime/models/dits/zimage.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+        "python/sglang/multimodal_gen/runtime/server_args.py",
+        "python/sglang/multimodal_gen/runtime/utils/perf_logger.py",
+        "python/sglang/multimodal_gen/test/server/accuracy_config.py",
+        "python/sglang/multimodal_gen/test/server/perf_baselines.json",
+        "python/sglang/multimodal_gen/test/server/testcase_configs.py",
+        "python/sglang/multimodal_gen/tools/convert_zimage_hf_to_fp8.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "examples/profiler/nsys_profile_tools/sglang_engine_model.json",
+          "status": "modified",
+          "additions": 27,
+          "deletions": 0,
+          "changes": 27
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/configs/models/dits/zimage.py",
+          "status": "modified",
+          "additions": 24,
+          "deletions": 0,
+          "changes": 24
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/envs.py",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 0,
+          "changes": 7
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/layers/linear.py",
+          "status": "modified",
+          "additions": 22,
+          "deletions": 15,
+          "changes": 37
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/managers/diffusion_cuda_graph_runner.py",
+          "status": "added",
+          "additions": 669,
+          "deletions": 0,
+          "changes": 669
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/zimage.py",
+          "status": "modified",
+          "additions": 238,
+          "deletions": 16,
+          "changes": 254
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+          "status": "modified",
+          "additions": 212,
+          "deletions": 23,
+          "changes": 235
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/server_args.py",
+          "status": "modified",
+          "additions": 12,
+          "deletions": 0,
+          "changes": 12
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/utils/perf_logger.py",
+          "status": "modified",
+          "additions": 0,
+          "deletions": 1,
+          "changes": 1
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/test/server/accuracy_config.py",
+          "status": "modified",
+          "additions": 24,
+          "deletions": 0,
+          "changes": 24
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/test/server/perf_baselines.json",
+          "status": "modified",
+          "additions": 72,
+          "deletions": 0,
+          "changes": 72
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/test/server/testcase_configs.py",
+          "status": "modified",
+          "additions": 34,
+          "deletions": 0,
+          "changes": 34
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/tools/convert_zimage_hf_to_fp8.py",
+          "status": "added",
+          "additions": 358,
+          "deletions": 0,
+          "changes": 358
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。",
+      "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "b2b3ecb42ae3043be8585048a1f3f184d044c4fad0f77496589229fa0eb0b94a"
     },
     {
+      "id": "sgl-project/sglang#20319",
       "repo": "sgl-project/sglang",
       "number": 20319,
       "title": "[AMD] Support fp8 MHA for diffusion model",
@@ -394,25 +1707,85 @@
       "draft": false,
       "created_at": "2026-03-11T06:03:37Z",
       "updated_at": "2026-03-31T06:12:14Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "amd",
+        "amd-aiter-not-ready",
+        "diffusion",
+        "run-ci"
+      ],
+      "body_excerpt": "Motivation Replace the FP8 per-tensor flash attention path (`flash_attn_fp8_pertensor_func`) in the aiter DiT backend with the FP8 MLA prefill ASM kernel (`mla_prefill_ps_asm_fwd` + `mla_reduce_v1`), which delivers significantly better performance on MI355X. When shapes are unsupported by the MLA kernel (v_head_dim != 128 or num_heads not divisible by 8), the code falls back gracefully to the BF16 flash attention path. Required: https://github.com/ROCm/aiter/pull/2481, this needs to wait until the aiter upgrade. Modifications Changes in `python/sglang/multimodal_gen/runtime/layers/attention/backends/aiter.py`: Key changes: **Replaced** `flash_attn_fp8_pertensor_func` with `mla_prefill_ps_asm_fwd` + `mla_reduce_v1` via the new `_mla_prefill_ps_attention` helper. **Added** `_build_mla_prefill_metadata` to construct persistent-scheduling metadata (varlen indptr, work partitioning, reduce maps) required by the ASM kernel. Adapted from the pattern in `sglang/srt/layers/attention/aiter_backend.py`. **Added** shape guard `_can_use_mla_prefill()` that checks `v_head_dim == 128` and `num_heads % 8 == 0` (kernel tile constraints). Falls back to BF16 when unsupported. Configuration ```bash MO",
+      "diffusion_hits": [
+        "denois",
+        "diffusion",
+        "dit",
+        "multimodal_gen/runtime",
+        "vae"
+      ],
+      "optimization_hits": [
+        "compile",
+        "fp8",
+        "offload"
+      ],
+      "benchmark_lines": [
+        "| DenoisingStage (s) | 432.40 | 348.43 | **-19.4%** |",
+        "| DenoisingStage (s) | 1403.50 | 1152.64 | **-17.9%** |"
+      ],
       "techniques": [
+        "low-precision-quantization",
         "attention-backend",
-        "low-precision-quantization"
+        "memory-offload"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "将 AMD diffusion attention 的 FP8 per-tensor flash attention 替换成 MLA prefill ASM kernel，并在不满足 tile 约束时回退到 BF16。收益集中在 Wan2.2 的 attention 热点。",
-      "evidence_zh": "MI355X 上 81 帧总时长 442.17s->357.75s，161 帧总时长 1426.08s->1175.45s。",
-      "status_zh": "open",
       "techniques_zh": [
+        "FP8/NVFP4/量化",
         "注意力后端/精度调度",
-        "FP8/NVFP4/量化"
+        "Offload/驻留策略"
+      ],
+      "technique_hits": {
+        "low-precision-quantization": [
+          "fp8",
+          "fp8 mha"
+        ],
+        "attention-backend": [
+          "aiter",
+          "flash attention",
+          "mla prefill"
+        ],
+        "memory-offload": [
+          "offload"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "memory"
       ],
       "impact_axes_zh": [
-        "延迟"
-      ]
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/runtime/layers/attention/backends/aiter.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/layers/attention/backends/aiter.py",
+          "status": "modified",
+          "additions": 306,
+          "deletions": 7,
+          "changes": 313
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "将 AMD MI355X 上 diffusion 模型的 FP8 attention 从 flash_attn 切换为 MLA prefill ASM kernel，DenoisingStage 延迟降低约 17-19%。",
+      "evidence_zh": "| DenoisingStage (s) | 432.40 | 348.43 | **-19.4%** |；| DenoisingStage (s) | 1403.50 | 1152.64 | **-17.9%** |",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "44cc8a0ab3426ded787ca2bb819a972e614fd8b18737281b7db12f01dca2baba"
     },
     {
+      "id": "sgl-project/sglang#21417",
       "repo": "sgl-project/sglang",
       "number": 21417,
       "title": "[Diffusion] Change default torch.compile mode from max-autotune to default",
@@ -423,23 +1796,143 @@
       "draft": false,
       "created_at": "2026-03-25T17:01:44Z",
       "updated_at": "2026-03-26T22:22:32Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion"
+      ],
+      "body_excerpt": "Motivation The current default torch.compile mode for diffusion pipelines (max-autotune-no-cudagraphs) causes 1.47-1.68x denoising regression compared to no compile. Switching to default mode eliminates this regression and additionally speeds up text encoding (~2x) and VAE decode (~1.9x). In benchmarking against vllm-omni (which already uses default compile mode), SGLang's --enable-torch-compile was consistently slower due to this mode difference. With this change, SGLang with --enable-torch-compile is now faster than without it — matching the behavior seen in vllm-omni. Modifications Changed the default compile mode from max-autotune-no-cudagraphs to default in 3 files: python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py — general denoising stage python/sglang/multimodal_gen/runtime/pipelines_core/stages/model_specific_stages/mova.py — MoVA denoising stage python/sglang/multimodal_gen/runtime/pipelines_core/stages/hunyuan3d_paint.py — Hunyuan3D paint stage Not changed: python/sglang/multimodal_gen/runtime/models/dits/causal_wanvideo.py (hardcoded flex_attention compile, different use case). Users can still override via SGLANG_TORCH_COMPILE_MODE env var for back",
+      "diffusion_hits": [
+        "[/_]flux([/_.-]|$)",
+        "[/_]qwen[_-]?image([/_.-]|$)",
+        "[/_]z[_-]?image([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "flux",
+        "multimodal_gen/runtime",
+        "qwen-image",
+        "vae"
+      ],
+      "optimization_hits": [
+        "compile",
+        "cudagraph",
+        "faster",
+        "torch.compile"
+      ],
+      "benchmark_lines": [
+        "Observations: max-autotune causes 1.47-1.68x denoising regression and 30s+ warmup on Qwen. default mode keeps denoising at parity with eager while speeding up text encoding and VAE decode. Tested on FLUX.2-Klein-4B (4 st",
+        "Test environment: 1x H200 (141 GB HBM3e), BF16, container based on lmsysorg/sglang:dev"
+      ],
       "techniques": [
+        "cuda-graph",
         "torch-compile"
       ],
+      "techniques_zh": [
+        "CUDA Graph 图捕获",
+        "torch.compile 编译"
+      ],
+      "technique_hits": {
+        "cuda-graph": [
+          "cudagraph"
+        ],
+        "torch-compile": [
+          "compile mode",
+          "max-autotune",
+          "torch.compile"
+        ]
+      },
       "impact_axes": [
         "latency"
       ],
-      "summary_zh": "把 diffusion 默认 `torch.compile` mode 从 `max-autotune-no-cudagraphs` 改成 `default`，修复“开 compile 反而更慢”的运行时策略问题。它不是新增算子，而是 compile policy 调优。",
-      "evidence_zh": "作者给出 Qwen/Flux.2 测试，说明旧默认模式会导致 1.47-1.68x denoising regression，而新默认模式能改善 text encoding 与 VAE decode。",
-      "status_zh": "open",
-      "techniques_zh": [
-        "torch.compile 编译"
-      ],
       "impact_axes_zh": [
         "延迟"
-      ]
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/configs/pipeline_configs/base.py",
+        "python/sglang/multimodal_gen/configs/pipeline_configs/flux.py",
+        "python/sglang/multimodal_gen/configs/pipeline_configs/qwen_image.py",
+        "python/sglang/multimodal_gen/configs/pipeline_configs/zimage.py",
+        "python/sglang/multimodal_gen/runtime/pipelines/diffusers_pipeline.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/hunyuan3d_paint.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/model_specific_stages/mova.py",
+        "python/sglang/multimodal_gen/test/unit/test_torch_compile_mode.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/configs/pipeline_configs/base.py",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/configs/pipeline_configs/flux.py",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/configs/pipeline_configs/qwen_image.py",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/configs/pipeline_configs/zimage.py",
+          "status": "modified",
+          "additions": 1,
+          "deletions": 0,
+          "changes": 1
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines/diffusers_pipeline.py",
+          "status": "modified",
+          "additions": 13,
+          "deletions": 3,
+          "changes": 16
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 3,
+          "changes": 10
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/hunyuan3d_paint.py",
+          "status": "modified",
+          "additions": 11,
+          "deletions": 3,
+          "changes": 14
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/model_specific_stages/mova.py",
+          "status": "modified",
+          "additions": 12,
+          "deletions": 3,
+          "changes": 15
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/test/unit/test_torch_compile_mode.py",
+          "status": "added",
+          "additions": 101,
+          "deletions": 0,
+          "changes": 101
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "将 diffusion pipeline 的 torch.compile 默认模式从 max-autotune 改为 default，消除 1.47-1.68x denoising 回退，同时加速 text encoding（2x）和 VAE decode（1.9x）。",
+      "evidence_zh": "Observations: max-autotune causes 1.47-1.68x denoising regression and 30s+ warmup on Qwen. default mode keeps denoising at parity with eager while speeding up text encoding and VAE decode. Tested on FLUX.2-Klein-4B (4 st；Test environment: 1",
+      "status_zh": "open",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "5b8f5625bd3d0b9a3389df1336d4de98d9919f64e62556fc943d429197de1e15"
     },
     {
+      "id": "sgl-project/sglang#19516",
       "repo": "sgl-project/sglang",
       "number": 19516,
       "title": "[Diffusion] add cuda graph support for Qwen-Image",
@@ -450,52 +1943,93 @@
       "draft": false,
       "created_at": "2026-02-27T17:32:18Z",
       "updated_at": "2026-03-18T01:23:17Z",
+      "closed_at": null,
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "high priority"
+      ],
+      "body_excerpt": "Motivation For some of the profile, you can refer to [This document](https://uclabruins.feishu.cn/wiki/QXbtwSYfVipIiwkjsircPYZVnTh). *Background:** Diffusion models typically have long sequence lengths. For some models (Wan, FLUX), kernels can be launched ahead of time, so CPU overhead is relatively small even without CUDA Graphs. In this case we will focus on Qwen-Image, where we observe ~30% cpu overhead on the profile. (For the profile, you can check [This document](https://uclabruins.feishu.cn/wiki/QXbtwSYfVipIiwkjsircPYZVnTh). ) <img width=\"1248\" height=\"262\" alt=\"image\" src=\"https://github.com/user-attachments/assets/334c7ba2-6133-4dcb-abc0-a02c899a55d1\" /> Modifications There are several challenges of add cuda graph for diffusion models. *Challenge 1:** In image generation, input shapes are tied to (width, height, prompt_length). In theory, users can pass a different (width, height) per request, making it impossible to pre-build graphs exhaustively. In practice, different customers have different size requirements, and occasionally someone wants to try a new size. prompt_length is a bit more manageable — most models cap it at a max length (e.g., Qwen-Image caps at 512). * Ch",
+      "diffusion_hits": [
+        "[/_]qwen[_-]?image([/_.-]|$)",
+        "diffusion",
+        "dit",
+        "flux",
+        "multimodal_gen/runtime",
+        "qwen-image",
+        "vae",
+        "wan"
+      ],
+      "optimization_hits": [
+        "compile",
+        "cuda graph",
+        "offload",
+        "overhead"
+      ],
+      "benchmark_lines": [],
       "techniques": [
-        "cuda-graph"
+        "cuda-graph",
+        "memory-offload"
       ],
+      "techniques_zh": [
+        "CUDA Graph 图捕获",
+        "Offload/驻留策略"
+      ],
+      "technique_hits": {
+        "cuda-graph": [
+          "cuda graph",
+          "graph capture"
+        ],
+        "memory-offload": [
+          "offload"
+        ]
+      },
       "impact_axes": [
-        "latency"
+        "latency",
+        "memory"
       ],
-      "summary_zh": "针对 Qwen-Image 里约 30% 的 CPU launch overhead，按 txt/img 子路径拆分并捕获 CUDA Graph，尽量只对 prompt 维做 padding。PR 的重点是消除 host launch gap，而不是改模型算法。",
-      "evidence_zh": "给出了 profile 与输出一致性验证；属于 profile-based 的性能 PR。",
+      "impact_axes_zh": [
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "python/sglang/multimodal_gen/runtime/models/dits/qwen_image.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+        "python/sglang/multimodal_gen/runtime/server_args.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/qwen_image.py",
+          "status": "modified",
+          "additions": 288,
+          "deletions": 35,
+          "changes": 323
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/stages/denoising.py",
+          "status": "modified",
+          "additions": 19,
+          "deletions": 1,
+          "changes": 20
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/server_args.py",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 0,
+          "changes": 8
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "为 Qwen-Image 接入 CUDA Graph 支持，解决短序列模型中 CPU launch overhead 占比高的问题，减少 denoising 的 host-device 同步开销。",
+      "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。",
       "status_zh": "open",
-      "techniques_zh": [
-        "CUDA Graph 图捕获"
-      ],
-      "impact_axes_zh": [
-        "延迟"
-      ]
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "a39f7155f93a79460655866729c66841f8b488aa8155b9581bf9a7e6ba140a1d"
     },
     {
-      "repo": "sgl-project/sglang",
-      "number": 20361,
-      "title": "[Diffusion] Bump up cache-dit & support quant for diffusers backend",
-      "url": "https://github.com/sgl-project/sglang/pull/20361",
-      "author": "DefTruth",
-      "state": "closed",
-      "merged": true,
-      "draft": false,
-      "created_at": "2026-03-11T12:50:04Z",
-      "updated_at": "2026-03-17T11:57:16Z",
-      "techniques": [
-        "cache-reuse",
-        "low-precision-quantization"
-      ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "升级 cache-dit 集成，让 diffusers backend 能直接加载更完整的 cache、parallel 与 FP8 配置。它的本质是把 cache-dit 的优化能力完整打通到 SGLang diffusion。",
-      "evidence_zh": "FLUX.1-dev 在 L20 上 20.46s->13.81s，在 H200 上 3.73s->2.77s。",
-      "status_zh": "merged",
-      "techniques_zh": [
-        "缓存复用",
-        "FP8/NVFP4/量化"
-      ],
-      "impact_axes_zh": [
-        "延迟"
-      ]
-    },
-    {
+      "id": "sgl-project/sglang#19673",
       "repo": "sgl-project/sglang",
       "number": 19673,
       "title": "[diffusion] support torch compile for diffusers backend",
@@ -506,23 +2040,129 @@
       "draft": false,
       "created_at": "2026-03-02T09:44:38Z",
       "updated_at": "2026-03-04T06:17:46Z",
+      "closed_at": "2026-03-04T06:08:45Z",
+      "merged_at": "2026-03-04T06:08:45Z",
+      "labels": [
+        "diffusion",
+        "documentation",
+        "run-ci"
+      ],
+      "body_excerpt": "Motivation support torch compile for diffusers backend Modifications Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup. Support custom `warmup_steps (default 1)` in server_args. When cache-dit and torch.compile both enabled, we need to increase the warmup_steps to get more stable performance results. Benchmarking and Profiling NVIDIA L20, FLUX.1-dev, 28 steps |diffusers backend| + compile | + compile + cache | |:---:|:---:|:---:| |23.6s|20.3s|12.8s| |<img width=\"1024\" height=\"1024\" alt=\"flux_diffusers\" src=\"https://github.com/user-attachments/assets/19c6f28f-14ce-4787-a4b9-074887e29684\" />|<img width=\"1024\" height=\"1024\" alt=\"flux_diffusers_torch_compile\" src=\"https://github.com/user-attachments/assets/99ff97d6-de3e-4a3b-9817-b1c991f70a65\" />|<img width=\"1024\" height=\"1024\" alt=\"flux_cache_diffusers_torch_compile\" src=\"https://github.com/user-attachments/assets/1f87b6c6-a7b7-4dec-88c1-e48dbe420693\" />| NVIDIA H200, FLUX.1-dev, 28 steps |Config| Latency(s)| |:---|:---| |sgld_fa3|3.82| |sgld_fa3_compile|3.50| |diffusers_be_sdpa|5.58| |diffusers_be_sdpa_compile|4.32| |diffusers_be_fa3_compile|3.73| |diffusers_b",
+      "diffusion_hits": [
+        "[/_]diffusion([/_.-]|$)",
+        "cache-dit",
+        "diffusion",
+        "dit",
+        "flux",
+        "multimodal_gen/runtime",
+        "vae"
+      ],
+      "optimization_hits": [
+        "cache",
+        "compile",
+        "latency",
+        "offload",
+        "overhead",
+        "resident",
+        "snapshot",
+        "speedup",
+        "torch.compile"
+      ],
+      "benchmark_lines": [
+        "Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.",
+        "|23.6s|20.3s|12.8s|"
+      ],
       "techniques": [
-        "torch-compile"
+        "torch-compile",
+        "attention-backend",
+        "memory-offload",
+        "cache-reuse"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "让 diffusers backend 也能安全启用 `torch.compile`，并补上 `warmup_steps` 来配合 cache-dit。它把 compile 收益从自研 backend 扩展到了 diffusers 路径。",
-      "evidence_zh": "FLUX.1-dev 在 L20 上 23.6s->20.3s；与 cache 叠加后到 12.8s。",
-      "status_zh": "merged",
       "techniques_zh": [
-        "torch.compile 编译"
+        "torch.compile 编译",
+        "注意力后端/精度调度",
+        "Offload/驻留策略",
+        "缓存复用"
+      ],
+      "technique_hits": {
+        "torch-compile": [
+          "torch.compile",
+          "warmup_steps"
+        ],
+        "attention-backend": [
+          "attention backend"
+        ],
+        "memory-offload": [
+          "offload",
+          "resident",
+          "snapshot"
+        ],
+        "cache-reuse": [
+          "cache-dit"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "memory"
       ],
       "impact_axes_zh": [
-        "延迟"
-      ]
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "docs/diffusion/api/cli.md",
+        "python/sglang/multimodal_gen/runtime/managers/scheduler.py",
+        "python/sglang/multimodal_gen/runtime/pipelines/diffusers_pipeline.py",
+        "python/sglang/multimodal_gen/runtime/pipelines_core/schedule_batch.py",
+        "python/sglang/multimodal_gen/runtime/server_args.py"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "docs/diffusion/api/cli.md",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 0,
+          "changes": 2
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/managers/scheduler.py",
+          "status": "modified",
+          "additions": 2,
+          "deletions": 4,
+          "changes": 6
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines/diffusers_pipeline.py",
+          "status": "modified",
+          "additions": 55,
+          "deletions": 0,
+          "changes": 55
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/pipelines_core/schedule_batch.py",
+          "status": "modified",
+          "additions": 8,
+          "deletions": 5,
+          "changes": 13
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/server_args.py",
+          "status": "modified",
+          "additions": 7,
+          "deletions": 0,
+          "changes": 7
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。",
+      "evidence_zh": "Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|",
+      "status_zh": "merged",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "4d08990484a97ce2c93794f4053b3db66b16931dd2f12bb15ed313ea47e4f3d8"
     },
     {
+      "id": "sgl-project/sglang#19632",
       "repo": "sgl-project/sglang",
       "number": 19632,
       "title": "[Perf] Reduce DiT kernel launch overhead with fused CUDA kernels for FLUX/Z-Image",
@@ -533,21 +2173,136 @@
       "draft": false,
       "created_at": "2026-03-01T20:29:54Z",
       "updated_at": "2026-03-02T03:06:02Z",
+      "closed_at": "2026-03-02T03:06:02Z",
+      "merged_at": null,
+      "labels": [
+        "diffusion",
+        "documentation"
+      ],
+      "body_excerpt": "Motivation This PR introduces performance optimizations for SGLang Diffusion models (FLUX.1/2 and Z-Image-Turbo) by leveraging fused CUDA kernels and reducing kernel launch overhead in the DiT (Diffusion Transformer) denoising loop. The goal is to improve hardware utilization and reduce latency for image generation workloads. Modifications 1. Fused Residual + Norm + Modulation (FLUX & FLUX.2) Integrated `ScaleResidualLayerNormScaleShift` into `FluxTransformerBlock` and `Flux2TransformerBlock` Fuses three separate operations (residual addition, LayerNorm, scale/shift modulation) into a single kernel Reduces kernel launch overhead significantly for models with 19-57 transformer blocks 2. Fused Norm + Modulation (Z-Image & FLUX.2 Single Blocks) Implemented `RMSNormScaleShift` for Z-Image and `LayerNormScaleShift` for FLUX.2 Added configurable `scale_constant` support in `layernorm.py` infrastructure Supports both `x * (1 + scale)` and `x * scale` modulation patterns 3. Fused QK Normalization Applied `apply_qk_norm` in `Flux2ParallelSelfAttention` Normalizes both Query and Key tensors in a single pass Improves memory bandwidth utilization 4. Gated Residual Fusion (FLUX Single Blocks) I",
+      "diffusion_hits": [
+        "[/_]flux([/_.-]|$)",
+        "[/_]z[_-]?image([/_.-]|$)",
+        "denois",
+        "diffusion",
+        "dit",
+        "flux",
+        "flux_",
+        "multimodal_gen/runtime",
+        "z-image",
+        "zimage"
+      ],
+      "optimization_hits": [
+        "fused",
+        "kernel launch",
+        "latency",
+        "optimiz",
+        "overhead",
+        "triton"
+      ],
+      "benchmark_lines": [
+        "| **Denoising Stage Total** | 0.7028s | 0.6913s | **1.64%** |",
+        "| **Average Time Per Step** | 0.1751s | 0.1721s | **1.71%** |"
+      ],
       "techniques": [
         "kernel-fusion"
       ],
-      "impact_axes": [
-        "latency"
-      ],
-      "summary_zh": "在 FLUX/FLUX.2/Z-Image 的 DiT 热路径里引入融合 residual+norm+modulation、QK norm 与 gated residual kernel，目标是减少 kernel launch 与内存带宽开销。",
-      "evidence_zh": "4-step 1024x1024 benchmark 里 DenoisingStage 0.7028s->0.6913s；作者预计标准 20-50 步场景收益会更明显。",
-      "status_zh": "closed-unmerged",
       "techniques_zh": [
         "内核融合/算子快路径"
       ],
+      "technique_hits": {
+        "kernel-fusion": [
+          "fused",
+          "gated residual",
+          "kernel launch",
+          "rmsnorm",
+          "silu",
+          "triton"
+        ]
+      },
+      "impact_axes": [
+        "latency",
+        "memory"
+      ],
       "impact_axes_zh": [
-        "延迟"
-      ]
+        "延迟",
+        "显存"
+      ],
+      "changed_files": [
+        "REPORT.md",
+        "bbuf.md",
+        "diffusion-results.json",
+        "python/sglang/multimodal_gen/runtime/layers/layernorm.py",
+        "python/sglang/multimodal_gen/runtime/models/dits/flux.py",
+        "python/sglang/multimodal_gen/runtime/models/dits/flux_2.py",
+        "python/sglang/multimodal_gen/runtime/models/dits/zimage.py",
+        "reproduce.md"
+      ],
+      "changed_file_details": [
+        {
+          "filename": "REPORT.md",
+          "status": "added",
+          "additions": 51,
+          "deletions": 0,
+          "changes": 51
+        },
+        {
+          "filename": "bbuf.md",
+          "status": "added",
+          "additions": 2,
+          "deletions": 0,
+          "changes": 2
+        },
+        {
+          "filename": "diffusion-results.json",
+          "status": "added",
+          "additions": 49,
+          "deletions": 0,
+          "changes": 49
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/layers/layernorm.py",
+          "status": "modified",
+          "additions": 22,
+          "deletions": 18,
+          "changes": 40
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/flux.py",
+          "status": "modified",
+          "additions": 45,
+          "deletions": 30,
+          "changes": 75
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/flux_2.py",
+          "status": "modified",
+          "additions": 41,
+          "deletions": 27,
+          "changes": 68
+        },
+        {
+          "filename": "python/sglang/multimodal_gen/runtime/models/dits/zimage.py",
+          "status": "modified",
+          "additions": 17,
+          "deletions": 7,
+          "changes": 24
+        },
+        {
+          "filename": "reproduce.md",
+          "status": "added",
+          "additions": 68,
+          "deletions": 0,
+          "changes": 68
+        }
+      ],
+      "summary_version": "strict-v3-llm",
+      "strict_filter_version": "strict-v3",
+      "summary_zh": "通过融合 CUDA kernel 减少 FLUX/Z-Image DiT denoising 循环中的 kernel launch 次数，Denoising Stage 总时间降低约 1.64%。",
+      "evidence_zh": "| **Denoising Stage Total** | 0.7028s | 0.6913s | **1.64%** |；| **Average Time Per Step** | 0.1751s | 0.1721s | **1.71%** |",
+      "status_zh": "closed-unmerged",
+      "synced_at": "2026-04-17T07:11:38Z",
+      "fingerprint": "db6f13b62bd3cf9b4e5b7c904080a63c2b1b0a7e05fdca6667a7c2b0343ef1f0"
     }
   ]
 }

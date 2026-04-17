@@ -1,6 +1,6 @@
 # Strict Diffusion Performance PR Scan
 
-Generated at: `2026-04-17T03:04:39Z`
+Generated at: `2026-04-17T07:26:25Z`
 
 ## Strict rule
 - Must be clearly about diffusion models, tasks, or runtime code paths.
@@ -8,114 +8,289 @@ Generated at: `2026-04-17T03:04:39Z`
 - Must touch production code paths; docs / CI / tests / benchmark-only / Docker / support-only PRs are excluded.
 
 ## Repo summary
-- `sgl-project/sglang`: 19 strict matches
+- `sgl-project/sglang`: 18 strict matches
 - `vllm-project/vllm`: 0 strict matches
 
+总计: 18 条
+
 ## Technique summary
-- `kernel-fusion` / 内核融合/算子快路径: 4
-- `cuda-graph` / CUDA Graph 图捕获: 3
-- `torch-compile` / torch.compile 编译: 2
-- `low-precision-quantization` / FP8/NVFP4/量化: 3
-- `attention-backend` / 注意力后端/精度调度: 2
+- `kernel-fusion` / 内核融合/算子快路径: 7
+- `cuda-graph` / CUDA Graph 图捕获: 4
+- `torch-compile` / torch.compile 编译: 5
+- `low-precision-quantization` / FP8/NVFP4/量化: 4
+- `attention-backend` / 注意力后端/精度调度: 5
 - `execution-batching` / 执行批处理/前向合批: 1
 - `communication` / 通信优化: 1
-- `memory-offload` / Offload/驻留策略: 1
-- `cache-reuse` / 缓存复用: 3
-- `memory-efficiency` / 显存效率: 2
-- `scheduling-throughput` / 调度/吞吐优化: 1
+- `memory-offload` / Offload/驻留策略: 9
+- `cache-reuse` / 缓存复用: 5
+- `memory-efficiency` / 显存效率: 3
+- `scheduling-throughput` / 调度/吞吐优化: 4
 
 ## Detailed list
 ### 内核融合/算子快路径 (`kernel-fusion`)
-- `sglang#22814` [open] `2026-04-17` diffusion: add HunyuanVideo GroupNorm+SiLU fast path
-  摘要：为 `HunyuanVideoResnetBlockCausal3D` 增加 Triton GroupNorm+SiLU 快路径，减少 3D ResNet 块中的归一化与激活开销。优化主要落在 decoding 阶段。
-  证据：H100 上总时延 57.23s->56.45s，DecodingStage 15.51s->14.55s。
-- `sglang#22786` [open] `2026-04-16` [AMD][diffusion] Add FlyDSL fused normalization kernels for ROCm diffusion models optimization
-  摘要：在 ROCm diffusion 路径里引入 FlyDSL 融合归一化、scale/shift 和 GeLU 快路径，并保留 shape、dtype、import 三类回退逻辑。核心目标是压缩 denoising 热路径上的 norm/modulation kernel 数量。
-  证据：Wan2.2 T2V 在 MI355X 上无 compile 总时延 143.41s->138.70s；compile 场景 131.60s->129.28s，denoising 子阶段改善更明显。
-- `sglang#22445` [open] `2026-04-15` [NPU] [Diffusion] Performance Optimization for LTX-2 Model
-  摘要：给 LTX-2 换成 custom RMSNorm 与 NPU 融合 RMSNorm，并在全 1 mask 情况下绕过低效 attention 路径。收益主要来自归一化与 attention 前处理热路径的收缩。
-  证据：E2E 在 NPU 上 102.74s->75.69s，在 GPU 上 136.62s->131.70s。
-- `sglang#19632` [closed-unmerged] `2026-03-02` [Perf] Reduce DiT kernel launch overhead with fused CUDA kernels for FLUX/Z-Image
-  摘要：在 FLUX/FLUX.2/Z-Image 的 DiT 热路径里引入融合 residual+norm+modulation、QK norm 与 gated residual kernel，目标是减少 kernel launch 与内存带宽开销。
-  证据：4-step 1024x1024 benchmark 里 DenoisingStage 0.7028s->0.6913s；作者预计标准 20-50 步场景收益会更明显。
+- `sgl-project/sglang#23025` [open] `2026-04-17` Optimize LTX2 modulation and two-stage warmup
+  链接：https://github.com/sgl-project/sglang/pull/23025
+  摘要：融合 LTX-2 的 RMSNorm+scale/shift 调制到 CuTeDSL/Triton kernel，并优化两阶段 warmup 流程。E2E 延迟下降约 7.84%（37.7s→34.7s，H100）。
+  证据：Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.；| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% 
+
+- `sgl-project/sglang#20816` [open] `2026-04-17` [Diffusion][CPU] Init CPU platform support for SGLang Diffusion
+  链接：https://github.com/sgl-project/sglang/pull/20816
+  摘要：为 SGLang Diffusion 添加 CPU 平台原生支持（Intel Xeon），包含 OMP 核绑定、NUMA 自动绑定、SDPA attention 等 CPU 算子适配，支持纯 CPU 推理。
+  证据：PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。
+
+- `sgl-project/sglang#22814` [open] `2026-04-17` diffusion: add HunyuanVideo GroupNorm+SiLU fast path
+  链接：https://github.com/sgl-project/sglang/pull/22814
+  摘要：为 HunyuanVideo 的 ResnetBlock 引入 Triton GroupNorm+SiLU 融合 kernel fast path，DecodingStage 延迟降低约 6.2%。
+  证据：`DenoisingStage`: `41406.19 -> 41582.68 ms` (`+0.4%`)；`DecodingStage`: `15514.60 -> 14548.95 ms` (`-6.2%`)
+
+- `sgl-project/sglang#22445` [open] `2026-04-15` [NPU] [Diffusion] Performance Optimization for LTX-2 Model
+  链接：https://github.com/sgl-project/sglang/pull/22445
+  摘要：替换 LTX-2 中 torch.nn.RMSNorm 为自定义融合算子并集成 fused_rmsnorm，NPU 上 E2E 延迟降低约 27%，GPU 上降低约 3%。
+  证据：This PR reduces E2E latency by approximately 27% on NPU and 3% on GPU.；E2E before the pr: 102.74s
+
+- `sgl-project/sglang#22441` [open] `2026-04-12` [diffusion] Cache LTX-2 RoPE coords to avoid per-step recompute
+  链接：https://github.com/sgl-project/sglang/pull/22441
+  摘要：为 LTX-2 denoising 循环引入 RoPE 坐标 LRU 缓存，避免每步重复构造 video/audio coords，减少重复计算开销。
+  证据：PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。
+
+- `sgl-project/sglang#21912` [open] `2026-04-02` [diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph 
+  链接：https://github.com/sgl-project/sglang/pull/21912
+  摘要：为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。
+  证据：PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。
+
+- `sgl-project/sglang#19632` [closed-unmerged] `2026-03-02` [Perf] Reduce DiT kernel launch overhead with fused CUDA kernels for FLUX/Z-Image
+  链接：https://github.com/sgl-project/sglang/pull/19632
+  摘要：通过融合 CUDA kernel 减少 FLUX/Z-Image DiT denoising 循环中的 kernel launch 次数，Denoising Stage 总时间降低约 1.64%。
+  证据：| **Denoising Stage Total** | 0.7028s | 0.6913s | **1.64%** |；| **Average Time Per Step** | 0.1751s | 0.1721s | **1.71%** |
+
 
 ### CUDA Graph 图捕获 (`cuda-graph`)
-- `sglang#19876` [closed-unmerged] `2026-04-17` [Diffusion] Diffusion support cuda graph
-  摘要：把 CUDA Graph 预捕获扩展到通用 diffusion/FLUX 路径，通过预捕获 CFG positive graph 减少 kernel 间空洞。优化很直接，主要作用在 denoising 的 host launch 开销。
-  证据：FLUX.1-dev 50 步里单步 0.1495s->0.1449s，Pixel data 总时长 17.61s->15.02s。
-- `sglang#21912` [open] `2026-04-02` [diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph 
-  摘要：给 Z-Image-Turbo 做完整 FP8 量化（attention+FFN）并接入 whole/step-level CUDA Graph，顺带修复 FFN FP8 scale 丢失等加载问题。组合目标是同时压缩 GEMM 成本和 host 发射开销。
-  证据：H20 上 1024x1024 的 E2E 3607.24ms->1837.81ms；512x512 为 923.06ms->504.06ms。
-- `sglang#19516` [open] `2026-03-18` [Diffusion] add cuda graph support for Qwen-Image
-  摘要：针对 Qwen-Image 里约 30% 的 CPU launch overhead，按 txt/img 子路径拆分并捕获 CUDA Graph，尽量只对 prompt 维做 padding。PR 的重点是消除 host launch gap，而不是改模型算法。
-  证据：给出了 profile 与输出一致性验证；属于 profile-based 的性能 PR。
+- `sgl-project/sglang#19876` [closed-unmerged] `2026-04-17` [Diffusion] Diffusion support cuda graph
+  链接：https://github.com/sgl-project/sglang/pull/19876
+  摘要：为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。
+  证据：[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa；[03-04 03:52:29] Me
+
+- `sgl-project/sglang#21912` [open] `2026-04-02` [diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph 
+  链接：https://github.com/sgl-project/sglang/pull/21912
+  摘要：为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。
+  证据：PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。
+
+- `sgl-project/sglang#21417` [open] `2026-03-26` [Diffusion] Change default torch.compile mode from max-autotune to default
+  链接：https://github.com/sgl-project/sglang/pull/21417
+  摘要：将 diffusion pipeline 的 torch.compile 默认模式从 max-autotune 改为 default，消除 1.47-1.68x denoising 回退，同时加速 text encoding（2x）和 VAE decode（1.9x）。
+  证据：Observations: max-autotune causes 1.47-1.68x denoising regression and 30s+ warmup on Qwen. default mode keeps denoising at parity with eager while speeding up text encoding and VAE decode. Tested on FLUX.2-Klein-4B (4 st；Test environment: 1
+
+- `sgl-project/sglang#19516` [open] `2026-03-18` [Diffusion] add cuda graph support for Qwen-Image
+  链接：https://github.com/sgl-project/sglang/pull/19516
+  摘要：为 Qwen-Image 接入 CUDA Graph 支持，解决短序列模型中 CPU launch overhead 占比高的问题，减少 denoising 的 host-device 同步开销。
+  证据：PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。
+
 
 ### torch.compile 编译 (`torch-compile`)
-- `sglang#21417` [open] `2026-03-26` [Diffusion] Change default torch.compile mode from max-autotune to default
-  摘要：把 diffusion 默认 `torch.compile` mode 从 `max-autotune-no-cudagraphs` 改成 `default`，修复“开 compile 反而更慢”的运行时策略问题。它不是新增算子，而是 compile policy 调优。
-  证据：作者给出 Qwen/Flux.2 测试，说明旧默认模式会导致 1.47-1.68x denoising regression，而新默认模式能改善 text encoding 与 VAE decode。
-- `sglang#19673` [merged] `2026-03-04` [diffusion] support torch compile for diffusers backend
-  摘要：让 diffusers backend 也能安全启用 `torch.compile`，并补上 `warmup_steps` 来配合 cache-dit。它把 compile 收益从自研 backend 扩展到了 diffusers 路径。
-  证据：FLUX.1-dev 在 L20 上 23.6s->20.3s；与 cache 叠加后到 12.8s。
+- `sgl-project/sglang#23025` [open] `2026-04-17` Optimize LTX2 modulation and two-stage warmup
+  链接：https://github.com/sgl-project/sglang/pull/23025
+  摘要：融合 LTX-2 的 RMSNorm+scale/shift 调制到 CuTeDSL/Triton kernel，并优化两阶段 warmup 流程。E2E 延迟下降约 7.84%（37.7s→34.7s，H100）。
+  证据：Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.；| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% 
+
+- `sgl-project/sglang#20434` [closed-unmerged] `2026-04-17` [diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead
+  链接：https://github.com/sgl-project/sglang/pull/20434
+  摘要：将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。
+  证据：[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)；[03-12 08:39:16] Me
+
+- `sgl-project/sglang#21912` [open] `2026-04-02` [diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph 
+  链接：https://github.com/sgl-project/sglang/pull/21912
+  摘要：为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。
+  证据：PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。
+
+- `sgl-project/sglang#21417` [open] `2026-03-26` [Diffusion] Change default torch.compile mode from max-autotune to default
+  链接：https://github.com/sgl-project/sglang/pull/21417
+  摘要：将 diffusion pipeline 的 torch.compile 默认模式从 max-autotune 改为 default，消除 1.47-1.68x denoising 回退，同时加速 text encoding（2x）和 VAE decode（1.9x）。
+  证据：Observations: max-autotune causes 1.47-1.68x denoising regression and 30s+ warmup on Qwen. default mode keeps denoising at parity with eager while speeding up text encoding and VAE decode. Tested on FLUX.2-Klein-4B (4 st；Test environment: 1
+
+- `sgl-project/sglang#19673` [merged] `2026-03-04` [diffusion] support torch compile for diffusers backend
+  链接：https://github.com/sgl-project/sglang/pull/19673
+  摘要：为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。
+  证据：Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|
+
 
 ### FP8/NVFP4/量化 (`low-precision-quantization`)
-- `sglang#21912` [open] `2026-04-02` [diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph 
-  摘要：给 Z-Image-Turbo 做完整 FP8 量化（attention+FFN）并接入 whole/step-level CUDA Graph，顺带修复 FFN FP8 scale 丢失等加载问题。组合目标是同时压缩 GEMM 成本和 host 发射开销。
-  证据：H20 上 1024x1024 的 E2E 3607.24ms->1837.81ms；512x512 为 923.06ms->504.06ms。
-- `sglang#20319` [open] `2026-03-31` [AMD] Support fp8 MHA for diffusion model
-  摘要：将 AMD diffusion attention 的 FP8 per-tensor flash attention 替换成 MLA prefill ASM kernel，并在不满足 tile 约束时回退到 BF16。收益集中在 Wan2.2 的 attention 热点。
-  证据：MI355X 上 81 帧总时长 442.17s->357.75s，161 帧总时长 1426.08s->1175.45s。
-- `sglang#20361` [merged] `2026-03-17` [Diffusion] Bump up cache-dit & support quant for diffusers backend
-  摘要：升级 cache-dit 集成，让 diffusers backend 能直接加载更完整的 cache、parallel 与 FP8 配置。它的本质是把 cache-dit 的优化能力完整打通到 SGLang diffusion。
-  证据：FLUX.1-dev 在 L20 上 20.46s->13.81s，在 H200 上 3.73s->2.77s。
+- `sgl-project/sglang#22869` [open] `2026-04-17` [diffusion] optimize ltx-2.3 offload hot paths
+  链接：https://github.com/sgl-project/sglang/pull/22869
+  摘要：优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。
+  证据：2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)
+
+- `sgl-project/sglang#21742` [open] `2026-04-08` [diffusion] attention: add support for hybrid attention schedule
+  链接：https://github.com/sgl-project/sglang/pull/21742
+  摘要：引入混合 attention schedule，允许部分 denoising 步使用 FP8 attention、其余步使用高精度 backend，兼顾质量与速度。DenoisingStage 延迟降低 11-13%。
+  证据：| DenoisingStage | 158981.35 | 138116.00 | -20865.35 | -13.1% | 🟢 |；| DenoisingStage | 158981.35 | 140662.09 | -18319.26 | -11.5% | 🟢 |
+
+- `sgl-project/sglang#21912` [open] `2026-04-02` [diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph 
+  链接：https://github.com/sgl-project/sglang/pull/21912
+  摘要：为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。
+  证据：PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。
+
+- `sgl-project/sglang#20319` [open] `2026-03-31` [AMD] Support fp8 MHA for diffusion model
+  链接：https://github.com/sgl-project/sglang/pull/20319
+  摘要：将 AMD MI355X 上 diffusion 模型的 FP8 attention 从 flash_attn 切换为 MLA prefill ASM kernel，DenoisingStage 延迟降低约 17-19%。
+  证据：| DenoisingStage (s) | 432.40 | 348.43 | **-19.4%** |；| DenoisingStage (s) | 1403.50 | 1152.64 | **-17.9%** |
+
 
 ### 注意力后端/精度调度 (`attention-backend`)
-- `sglang#21742` [open] `2026-04-08` [diffusion] attention: add support for hybrid attention schedule
-  摘要：引入 hybrid attention schedule，在扩散前后若干步使用高精后端，中间步切到更快的低精后端，以降低 artifacts 同时保留大部分性能收益。
-  证据：Wan2.2 T2V 上，相比纯 AITER 基线，hybrid 调度的 DenoisingStage 下降约 11.5%。
-- `sglang#20319` [open] `2026-03-31` [AMD] Support fp8 MHA for diffusion model
-  摘要：将 AMD diffusion attention 的 FP8 per-tensor flash attention 替换成 MLA prefill ASM kernel，并在不满足 tile 约束时回退到 BF16。收益集中在 Wan2.2 的 attention 热点。
-  证据：MI355X 上 81 帧总时长 442.17s->357.75s，161 帧总时长 1426.08s->1175.45s。
+- `sgl-project/sglang#20816` [open] `2026-04-17` [Diffusion][CPU] Init CPU platform support for SGLang Diffusion
+  链接：https://github.com/sgl-project/sglang/pull/20816
+  摘要：为 SGLang Diffusion 添加 CPU 平台原生支持（Intel Xeon），包含 OMP 核绑定、NUMA 自动绑定、SDPA attention 等 CPU 算子适配，支持纯 CPU 推理。
+  证据：PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。
+
+- `sgl-project/sglang#21742` [open] `2026-04-08` [diffusion] attention: add support for hybrid attention schedule
+  链接：https://github.com/sgl-project/sglang/pull/21742
+  摘要：引入混合 attention schedule，允许部分 denoising 步使用 FP8 attention、其余步使用高精度 backend，兼顾质量与速度。DenoisingStage 延迟降低 11-13%。
+  证据：| DenoisingStage | 158981.35 | 138116.00 | -20865.35 | -13.1% | 🟢 |；| DenoisingStage | 158981.35 | 140662.09 | -18319.26 | -11.5% | 🟢 |
+
+- `sgl-project/sglang#21912` [open] `2026-04-02` [diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph 
+  链接：https://github.com/sgl-project/sglang/pull/21912
+  摘要：为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。
+  证据：PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。
+
+- `sgl-project/sglang#20319` [open] `2026-03-31` [AMD] Support fp8 MHA for diffusion model
+  链接：https://github.com/sgl-project/sglang/pull/20319
+  摘要：将 AMD MI355X 上 diffusion 模型的 FP8 attention 从 flash_attn 切换为 MLA prefill ASM kernel，DenoisingStage 延迟降低约 17-19%。
+  证据：| DenoisingStage (s) | 432.40 | 348.43 | **-19.4%** |；| DenoisingStage (s) | 1403.50 | 1152.64 | **-17.9%** |
+
+- `sgl-project/sglang#19673` [merged] `2026-03-04` [diffusion] support torch compile for diffusers backend
+  链接：https://github.com/sgl-project/sglang/pull/19673
+  摘要：为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。
+  证据：Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|
+
 
 ### 执行批处理/前向合批 (`execution-batching`)
-- `sglang#20434` [closed-unmerged] `2026-04-17` [diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead
-  摘要：把 Qwen-Image 串行 CFG 的 cond/uncond 两次 transformer forward 合并成一次 batched forward，再按原公式合成 guidance。算法不变，主要减少每步框架与 launch 开销。
-  证据：50 步 denoising 的单步时间 0.3052s->0.2553s，总 denoising 15.2640s->12.7667s。
+- `sgl-project/sglang#20434` [closed-unmerged] `2026-04-17` [diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead
+  链接：https://github.com/sgl-project/sglang/pull/20434
+  摘要：将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。
+  证据：[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)；[03-12 08:39:16] Me
+
 
 ### 通信优化 (`communication`)
-- `sglang#22805` [open] `2026-04-14` [diffusion] comms: Pack QKV for a2a in Flux2
-  摘要：在 Flux2 的 USP attention 中把 Q/K/V 三次 all-to-all 合并成一次打包通信，减少多 GPU 通信调用和拆分开销。收益集中在 denoising 通信热段。
-  证据：8xB200 与 8xMI355X 的 1024/2048 分辨率测试中，DenoisingStage 约下降 0.7%-2.0%，总体延迟下降约 0.5%-1.8%。
+- `sgl-project/sglang#22805` [open] `2026-04-14` [diffusion] comms: Pack QKV for a2a in Flux2
+  链接：https://github.com/sgl-project/sglang/pull/22805
+  摘要：将 FLUX.2 USP 中 Q/K/V 的三次独立 all-to-all 通信合并为一次 pack 后的单次 all-to-all，DenoisingStage 延迟降低约 2.0%。
+  证据：| **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ |；| DenoisingStage | 4523.43 | 4432.28 | -91.15 | -2.0% | ⚪️ |
+
 
 ### Offload/驻留策略 (`memory-offload`)
-- `sglang#22869` [open] `2026-04-17` [diffusion] optimize ltx-2.3 offload hot paths
-  摘要：围绕 LTX-2.3 两阶段管线，减少 DiT/VAE 的 CPU offload 和请求期 `module.to(cpu/cuda)` 切换，新增 snapshot/resident 模式与预合并 stage-2 transformer。重点是把权重搬运和 LoRA 切换的同步开销从请求路径里移走。
-  证据：同一条链路下 e2e 从 legacy 33.93s 降到 snapshot 30.16s，再到 resident 21.42s；resident 模式显存峰值提升到约 99.31GB。
+- `sgl-project/sglang#20816` [open] `2026-04-17` [Diffusion][CPU] Init CPU platform support for SGLang Diffusion
+  链接：https://github.com/sgl-project/sglang/pull/20816
+  摘要：为 SGLang Diffusion 添加 CPU 平台原生支持（Intel Xeon），包含 OMP 核绑定、NUMA 自动绑定、SDPA attention 等 CPU 算子适配，支持纯 CPU 推理。
+  证据：PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。
+
+- `sgl-project/sglang#22869` [open] `2026-04-17` [diffusion] optimize ltx-2.3 offload hot paths
+  链接：https://github.com/sgl-project/sglang/pull/22869
+  摘要：优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。
+  证据：2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)
+
+- `sgl-project/sglang#22814` [open] `2026-04-17` diffusion: add HunyuanVideo GroupNorm+SiLU fast path
+  链接：https://github.com/sgl-project/sglang/pull/22814
+  摘要：为 HunyuanVideo 的 ResnetBlock 引入 Triton GroupNorm+SiLU 融合 kernel fast path，DecodingStage 延迟降低约 6.2%。
+  证据：`DenoisingStage`: `41406.19 -> 41582.68 ms` (`+0.4%`)；`DecodingStage`: `15514.60 -> 14548.95 ms` (`-6.2%`)
+
+- `sgl-project/sglang#20434` [closed-unmerged] `2026-04-17` [diffusion] Batch serial CFG for Qwen-Image to reduce denoising overhead
+  链接：https://github.com/sgl-project/sglang/pull/20434
+  摘要：将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。
+  证据：[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)；[03-12 08:39:16] Me
+
+- `sgl-project/sglang#19876` [closed-unmerged] `2026-04-17` [Diffusion] Diffusion support cuda graph
+  链接：https://github.com/sgl-project/sglang/pull/19876
+  摘要：为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。
+  证据：[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa；[03-04 03:52:29] Me
+
+- `sgl-project/sglang#18764` [open] `2026-04-15` [diffusion] Add dynamic batching v0
+  链接：https://github.com/sgl-project/sglang/pull/18764
+  摘要：为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。
+  证据：Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P；| Model | Throughpu
+
+- `sgl-project/sglang#20319` [open] `2026-03-31` [AMD] Support fp8 MHA for diffusion model
+  链接：https://github.com/sgl-project/sglang/pull/20319
+  摘要：将 AMD MI355X 上 diffusion 模型的 FP8 attention 从 flash_attn 切换为 MLA prefill ASM kernel，DenoisingStage 延迟降低约 17-19%。
+  证据：| DenoisingStage (s) | 432.40 | 348.43 | **-19.4%** |；| DenoisingStage (s) | 1403.50 | 1152.64 | **-17.9%** |
+
+- `sgl-project/sglang#19516` [open] `2026-03-18` [Diffusion] add cuda graph support for Qwen-Image
+  链接：https://github.com/sgl-project/sglang/pull/19516
+  摘要：为 Qwen-Image 接入 CUDA Graph 支持，解决短序列模型中 CPU launch overhead 占比高的问题，减少 denoising 的 host-device 同步开销。
+  证据：PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。
+
+- `sgl-project/sglang#19673` [merged] `2026-03-04` [diffusion] support torch compile for diffusers backend
+  链接：https://github.com/sgl-project/sglang/pull/19673
+  摘要：为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。
+  证据：Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|
+
 
 ### 缓存复用 (`cache-reuse`)
-- `sglang#22441` [open] `2026-04-12` [diffusion] Cache LTX-2 RoPE coords to avoid per-step recompute
-  摘要：对 LTX-2 音视频 denoising 阶段中每步重复构造的 video/audio RoPE 坐标做 LRU 缓存，把与分辨率、帧数相关但跨步不变的准备工作移出循环。属于典型的 per-step 常量复用优化。
-  证据：A800 上单步 2.3484s->2.1664s，整段 denoising 93.94s->86.66s。
-- `sglang#21573` [open] `2026-04-01` Add persistent diffusion workspace reuse and extend random benchmarks for image-conditioned tasks
-  摘要：在多个 diffusion denoising loop 里复用 persistent workspace，避免每步重复分配临时 buffer。它属于低风险的 allocator/temporary tensor 开销优化。
-  证据：H200 单卡测试里，Wan DMD、Flux.2 与 Helios 都有小幅平均延迟或 P99 改善，并在部分模型上略降峰值显存。
-- `sglang#20361` [merged] `2026-03-17` [Diffusion] Bump up cache-dit & support quant for diffusers backend
-  摘要：升级 cache-dit 集成，让 diffusers backend 能直接加载更完整的 cache、parallel 与 FP8 配置。它的本质是把 cache-dit 的优化能力完整打通到 SGLang diffusion。
-  证据：FLUX.1-dev 在 L20 上 20.46s->13.81s，在 H200 上 3.73s->2.77s。
+- `sgl-project/sglang#19876` [closed-unmerged] `2026-04-17` [Diffusion] Diffusion support cuda graph
+  链接：https://github.com/sgl-project/sglang/pull/19876
+  摘要：为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。
+  证据：[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa；[03-04 03:52:29] Me
+
+- `sgl-project/sglang#22441` [open] `2026-04-12` [diffusion] Cache LTX-2 RoPE coords to avoid per-step recompute
+  链接：https://github.com/sgl-project/sglang/pull/22441
+  摘要：为 LTX-2 denoising 循环引入 RoPE 坐标 LRU 缓存，避免每步重复构造 video/audio coords，减少重复计算开销。
+  证据：PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。
+
+- `sgl-project/sglang#21742` [open] `2026-04-08` [diffusion] attention: add support for hybrid attention schedule
+  链接：https://github.com/sgl-project/sglang/pull/21742
+  摘要：引入混合 attention schedule，允许部分 denoising 步使用 FP8 attention、其余步使用高精度 backend，兼顾质量与速度。DenoisingStage 延迟降低 11-13%。
+  证据：| DenoisingStage | 158981.35 | 138116.00 | -20865.35 | -13.1% | 🟢 |；| DenoisingStage | 158981.35 | 140662.09 | -18319.26 | -11.5% | 🟢 |
+
+- `sgl-project/sglang#21912` [open] `2026-04-02` [diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph 
+  链接：https://github.com/sgl-project/sglang/pull/21912
+  摘要：为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。
+  证据：PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。
+
+- `sgl-project/sglang#19673` [merged] `2026-03-04` [diffusion] support torch compile for diffusers backend
+  链接：https://github.com/sgl-project/sglang/pull/19673
+  摘要：为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。
+  证据：Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|
+
 
 ### 显存效率 (`memory-efficiency`)
-- `sglang#22183` [open] `2026-04-12` [Diffusion] Sequential Per-Output Execution for Multi-Output Diffusion Generation
-  摘要：把 `num_outputs_per_prompt` 从 denoising 内部大 batch 改成执行器层的 sequential per-output，解决多输出时 OOM 和模型不兼容问题。这个 PR 主要优化的是显存占用而非单次速度。
-  证据：4 输出 FLUX 测试里 DiT 时间基本持平，但峰值显存 57.10GB->32.04GB。
-- `sglang#21573` [open] `2026-04-01` Add persistent diffusion workspace reuse and extend random benchmarks for image-conditioned tasks
-  摘要：在多个 diffusion denoising loop 里复用 persistent workspace，避免每步重复分配临时 buffer。它属于低风险的 allocator/temporary tensor 开销优化。
-  证据：H200 单卡测试里，Wan DMD、Flux.2 与 Helios 都有小幅平均延迟或 P99 改善，并在部分模型上略降峰值显存。
+- `sgl-project/sglang#22869` [open] `2026-04-17` [diffusion] optimize ltx-2.3 offload hot paths
+  链接：https://github.com/sgl-project/sglang/pull/22869
+  摘要：优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。
+  证据：2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)
+
+- `sgl-project/sglang#18764` [open] `2026-04-15` [diffusion] Add dynamic batching v0
+  链接：https://github.com/sgl-project/sglang/pull/18764
+  摘要：为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。
+  证据：Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P；| Model | Throughpu
+
+- `sgl-project/sglang#22183` [open] `2026-04-12` [Diffusion] Sequential Per-Output Execution for Multi-Output Diffusion Generation
+  链接：https://github.com/sgl-project/sglang/pull/22183
+  摘要：将多输出 diffusion 生成从全量 batch 改为逐输出顺序执行，峰值显存从 57GB 降至 32GB（降幅 43.9%），DiT 时间几乎不变。
+  证据：| DiT time | 15.2041 s | 15.4286 s | +1.4% |；| Peak GPU memory | 57,104 MB | **32,042 MB** | **↓ 43.9%** |
+
 
 ### 调度/吞吐优化 (`scheduling-throughput`)
-- `sglang#18764` [open] `2026-04-15` [diffusion] Add dynamic batching v0
-  摘要：给 diffusion scheduler 增加动态 batching（max batch size + delay），在不改模型算法的前提下提高 serving 吞吐并压低尾延迟。适用范围目前是 prompt-only 的 t2i/t2v。
-  证据：H100 上 Qwen-Image 吞吐 +29.6%，mean latency -22.4%，P99 -31.8%。
+- `sgl-project/sglang#22869` [open] `2026-04-17` [diffusion] optimize ltx-2.3 offload hot paths
+  链接：https://github.com/sgl-project/sglang/pull/22869
+  摘要：优化 LTX-2.3 的 offload 热路径：在高显存 Hopper GPU 上默认关闭 DiT/VAE CPU offload，预构建 stage-2 transformer 并常驻 GPU，减少权重搬运延迟约 67s。
+  证据：2. layerwise_offload.disable_offload(): move the dit to GPU, h2d(required when dit-layerwise-offload is enabled), ~67.1s；3. apply lora (~18.5s)
+
+- `sgl-project/sglang#18764` [open] `2026-04-15` [diffusion] Add dynamic batching v0
+  链接：https://github.com/sgl-project/sglang/pull/18764
+  摘要：为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。
+  证据：Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P；| Model | Throughpu
+
+- `sgl-project/sglang#22805` [open] `2026-04-14` [diffusion] comms: Pack QKV for a2a in Flux2
+  链接：https://github.com/sgl-project/sglang/pull/22805
+  摘要：将 FLUX.2 USP 中 Q/K/V 的三次独立 all-to-all 通信合并为一次 pack 后的单次 all-to-all，DenoisingStage 延迟降低约 2.0%。
+  证据：| **E2E Latency** | 4740.77 ms | 4657.01 ms | **-83.77 ms (-1.8%)** | ⚪️ |；| DenoisingStage | 4523.43 | 4432.28 | -91.15 | -2.0% | ⚪️ |
+
+- `sgl-project/sglang#22183` [open] `2026-04-12` [Diffusion] Sequential Per-Output Execution for Multi-Output Diffusion Generation
+  链接：https://github.com/sgl-project/sglang/pull/22183
+  摘要：将多输出 diffusion 生成从全量 batch 改为逐输出顺序执行，峰值显存从 57GB 降至 32GB（降幅 43.9%），DiT 时间几乎不变。
+  证据：| DiT time | 15.2041 s | 15.4286 s | +1.4% |；| Peak GPU memory | 57,104 MB | **32,042 MB** | **↓ 43.9%** |
+
 
 ## Notes
-- 本次清除了旧的宽松扫描结果，当前仓库只保留严格规则下的高置信 diffusion 性能 PR。
-- 由于 `vllm-project/vllm` 在这轮严格规则下没有命中项，当前数据全部来自 `sgl-project/sglang`。
+- 本次只保留严格规则下的高置信 diffusion 性能优化 PR。
+- 使用 word-boundary 匹配避免关键词误匹配（如 dit 不会匹配 edit）。
+- 摘要由 LLM 基于 PR 实际内容生成，非模板填充。
+

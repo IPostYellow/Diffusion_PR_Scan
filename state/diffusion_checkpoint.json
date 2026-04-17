@@ -1,15 +1,21 @@
 {
-  "last_scan_utc": "2026-04-17T03:04:39Z",
-  "strict_filter_version": "strict-v1",
-  "mode": "manual_strict_rebuild",
+  "last_scan_utc": "2026-04-17T07:26:25Z",
+  "strict_filter_version": "strict-v3",
+  "mode": "incremental_strict_sync",
   "repos": [
     "sgl-project/sglang",
     "vllm-project/vllm"
   ],
-  "matched_pr_count": 19,
+  "matched_pr_count": 18,
   "repos_summary": {
-    "sgl-project/sglang": 19,
+    "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
   },
-  "notes_zh": "仓库已按严格规则重建；后续增量扫描应以该版本规则为准。"
+  "last_run_id": "20260417T072625Z",
+  "last_delta": {
+    "added": 1,
+    "updated": 1,
+    "removed": 0
+  },
+  "notes_zh": "后续增量同步将沿用 strict diffusion 性能过滤与钉钉通知规则。"
 }

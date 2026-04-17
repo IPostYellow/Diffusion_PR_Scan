@@ -1,15 +1,25 @@
 {
-  "strict_filter_version": "strict-v1",
-  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "strict_filter_version": "strict-v3",
+  "generated_at_utc": "2026-04-17T07:26:25Z",
   "repo_summary": {
-    "sgl-project/sglang": 19,
+    "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
   },
   "category": {
     "slug": "cache-reuse",
     "label_zh": "缓存复用",
-    "count": 3,
+    "count": 5,
     "prs": [
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19876,
+        "title": "[Diffusion] Diffusion support cuda graph",
+        "url": "https://github.com/sgl-project/sglang/pull/19876",
+        "status_zh": "closed-unmerged",
+        "updated_at": "2026-04-17T01:00:22Z",
+        "summary_zh": "为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。",
+        "evidence_zh": "[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa；[03-04 03:52:29] Me"
+      },
       {
         "repo": "sgl-project/sglang",
         "number": 22441,
@@ -17,28 +27,38 @@
         "url": "https://github.com/sgl-project/sglang/pull/22441",
         "status_zh": "open",
         "updated_at": "2026-04-12T14:44:54Z",
-        "summary_zh": "对 LTX-2 音视频 denoising 阶段中每步重复构造的 video/audio RoPE 坐标做 LRU 缓存，把与分辨率、帧数相关但跨步不变的准备工作移出循环。属于典型的 per-step 常量复用优化。",
-        "evidence_zh": "A800 上单步 2.3484s->2.1664s，整段 denoising 93.94s->86.66s。"
+        "summary_zh": "为 LTX-2 denoising 循环引入 RoPE 坐标 LRU 缓存，避免每步重复构造 video/audio coords，减少重复计算开销。",
+        "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。"
       },
       {
         "repo": "sgl-project/sglang",
-        "number": 21573,
-        "title": "Add persistent diffusion workspace reuse and extend random benchmarks for image-conditioned tasks",
-        "url": "https://github.com/sgl-project/sglang/pull/21573",
+        "number": 21742,
+        "title": "[diffusion] attention: add support for hybrid attention schedule",
+        "url": "https://github.com/sgl-project/sglang/pull/21742",
         "status_zh": "open",
-        "updated_at": "2026-04-01T23:41:03Z",
-        "summary_zh": "在多个 diffusion denoising loop 里复用 persistent workspace，避免每步重复分配临时 buffer。它属于低风险的 allocator/temporary tensor 开销优化。",
-        "evidence_zh": "H200 单卡测试里，Wan DMD、Flux.2 与 Helios 都有小幅平均延迟或 P99 改善，并在部分模型上略降峰值显存。"
+        "updated_at": "2026-04-08T08:07:26Z",
+        "summary_zh": "引入混合 attention schedule，允许部分 denoising 步使用 FP8 attention、其余步使用高精度 backend，兼顾质量与速度。DenoisingStage 延迟降低 11-13%。",
+        "evidence_zh": "| DenoisingStage | 158981.35 | 138116.00 | -20865.35 | -13.1% | 🟢 |；| DenoisingStage | 158981.35 | 140662.09 | -18319.26 | -11.5% | 🟢 |"
       },
       {
         "repo": "sgl-project/sglang",
-        "number": 20361,
-        "title": "[Diffusion] Bump up cache-dit & support quant for diffusers backend",
-        "url": "https://github.com/sgl-project/sglang/pull/20361",
+        "number": 21912,
+        "title": "[diffusion] ZImage-Turbo DiT FP8 full quantization & CUDA Graph ",
+        "url": "https://github.com/sgl-project/sglang/pull/21912",
+        "status_zh": "open",
+        "updated_at": "2026-04-02T16:16:32Z",
+        "summary_zh": "为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。",
+        "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 19673,
+        "title": "[diffusion] support torch compile for diffusers backend",
+        "url": "https://github.com/sgl-project/sglang/pull/19673",
         "status_zh": "merged",
-        "updated_at": "2026-03-17T11:57:16Z",
-        "summary_zh": "升级 cache-dit 集成，让 diffusers backend 能直接加载更完整的 cache、parallel 与 FP8 配置。它的本质是把 cache-dit 的优化能力完整打通到 SGLang diffusion。",
-        "evidence_zh": "FLUX.1-dev 在 L20 上 20.46s->13.81s，在 H200 上 3.73s->2.77s。"
+        "updated_at": "2026-03-04T06:17:46Z",
+        "summary_zh": "为 diffusers backend 接入 torch.compile（兼容 cache-dit），FLUX.1-dev 在 L20 上 E2E 从 23.6s 降至 20.3s，提速 16.2%。",
+        "evidence_zh": "Support torch compile for diffusers backend (compatible with cache-dit), e.g, FLUX.1-dev, L20, 23.6s -> 20.3s, 16.2% speedup.；|23.6s|20.3s|12.8s|"
       }
     ]
   }

@@ -1,14 +1,14 @@
 {
-  "strict_filter_version": "strict-v1",
-  "generated_at_utc": "2026-04-17T03:04:39Z",
+  "strict_filter_version": "strict-v3",
+  "generated_at_utc": "2026-04-17T07:26:25Z",
   "repo_summary": {
-    "sgl-project/sglang": 19,
+    "sgl-project/sglang": 18,
     "vllm-project/vllm": 0
   },
   "category": {
     "slug": "cuda-graph",
     "label_zh": "CUDA Graph 图捕获",
-    "count": 3,
+    "count": 4,
     "prs": [
       {
         "repo": "sgl-project/sglang",
@@ -17,8 +17,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/19876",
         "status_zh": "closed-unmerged",
         "updated_at": "2026-04-17T01:00:22Z",
-        "summary_zh": "把 CUDA Graph 预捕获扩展到通用 diffusion/FLUX 路径，通过预捕获 CFG positive graph 减少 kernel 间空洞。优化很直接，主要作用在 denoising 的 host launch 开销。",
-        "evidence_zh": "FLUX.1-dev 50 步里单步 0.1495s->0.1449s，Pixel data 总时长 17.61s->15.02s。"
+        "summary_zh": "为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。",
+        "evidence_zh": "[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa；[03-04 03:52:29] Me"
       },
       {
         "repo": "sgl-project/sglang",
@@ -27,8 +27,18 @@
         "url": "https://github.com/sgl-project/sglang/pull/21912",
         "status_zh": "open",
         "updated_at": "2026-04-02T16:16:32Z",
-        "summary_zh": "给 Z-Image-Turbo 做完整 FP8 量化（attention+FFN）并接入 whole/step-level CUDA Graph，顺带修复 FFN FP8 scale 丢失等加载问题。组合目标是同时压缩 GEMM 成本和 host 发射开销。",
-        "evidence_zh": "H20 上 1024x1024 的 E2E 3607.24ms->1837.81ms；512x512 为 923.06ms->504.06ms。"
+        "summary_zh": "为 Z-Image-Turbo 实现完整 FP8 量化（覆盖 FFN SwiGLU 层）并接入 CUDA Graph，FP8 量化后 GPU 利用率提升可开启图捕获进一步压缩 launch 开销。",
+        "evidence_zh": "PR 描述给出了明确的性能目标，但没有附上可直接抽取的 benchmark 数值。"
+      },
+      {
+        "repo": "sgl-project/sglang",
+        "number": 21417,
+        "title": "[Diffusion] Change default torch.compile mode from max-autotune to default",
+        "url": "https://github.com/sgl-project/sglang/pull/21417",
+        "status_zh": "open",
+        "updated_at": "2026-03-26T22:22:32Z",
+        "summary_zh": "将 diffusion pipeline 的 torch.compile 默认模式从 max-autotune 改为 default，消除 1.47-1.68x denoising 回退，同时加速 text encoding（2x）和 VAE decode（1.9x）。",
+        "evidence_zh": "Observations: max-autotune causes 1.47-1.68x denoising regression and 30s+ warmup on Qwen. default mode keeps denoising at parity with eager while speeding up text encoding and VAE decode. Tested on FLUX.2-Klein-4B (4 st；Test environment: 1"
       },
       {
         "repo": "sgl-project/sglang",
@@ -37,8 +47,8 @@
         "url": "https://github.com/sgl-project/sglang/pull/19516",
         "status_zh": "open",
         "updated_at": "2026-03-18T01:23:17Z",
-        "summary_zh": "针对 Qwen-Image 里约 30% 的 CPU launch overhead，按 txt/img 子路径拆分并捕获 CUDA Graph，尽量只对 prompt 维做 padding。PR 的重点是消除 host launch gap，而不是改模型算法。",
-        "evidence_zh": "给出了 profile 与输出一致性验证；属于 profile-based 的性能 PR。"
+        "summary_zh": "为 Qwen-Image 接入 CUDA Graph 支持，解决短序列模型中 CPU launch overhead 占比高的问题，减少 denoising 的 host-device 同步开销。",
+        "evidence_zh": "PR 描述强调显存占用或驻留策略收益，建议重点关注峰值显存与 e2e 时延。"
       }
     ]
   }

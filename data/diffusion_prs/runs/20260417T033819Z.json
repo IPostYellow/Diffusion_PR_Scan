@@ -1,0 +1,48 @@
+{
+  "run_id": "20260417T033819Z",
+  "generated_at_utc": "2026-04-17T03:38:19Z",
+  "mode": "incremental_strict_sync",
+  "strict_filter_version": "strict-v2",
+  "repos_scanned": [
+    "sgl-project/sglang",
+    "vllm-project/vllm"
+  ],
+  "matched_pr_count": 20,
+  "repos_summary": {
+    "sgl-project/sglang": 17,
+    "vllm-project/vllm": 3
+  },
+  "category_counts": {
+    "kernel-fusion": 9,
+    "cuda-graph": 4,
+    "torch-compile": 5,
+    "low-precision-quantization": 6,
+    "attention-backend": 5,
+    "execution-batching": 1,
+    "communication": 2,
+    "memory-offload": 9,
+    "cache-reuse": 7,
+    "memory-efficiency": 3,
+    "scheduling-throughput": 4
+  },
+  "notes_zh": [
+    "本次按严格 diffusion 性能规则进行增量同步。",
+    "只保留带有明确性能目标和机制/benchmark 证据的 PR。",
+    "新增和更新 PR 会生成中文优化摘要，并可直接推送到钉钉。"
+  ],
+  "items": [
+    {
+      "repo": "vllm-project/vllm",
+      "number": 39366,
+      "title": "[BUG] Two phase pause to prevent deadlock",
+      "status_zh": "draft-open",
+      "techniques": [
+        "kernel-fusion",
+        "communication",
+        "cache-reuse"
+      ],
+      "summary_zh": "在 test-async-llm-dp 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 test_async_llm_dp.py, core.py。",
+      "url": "https://github.com/vllm-project/vllm/pull/39366"
+    }
+  ]
+}

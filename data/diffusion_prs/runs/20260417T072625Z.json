@@ -1,0 +1,66 @@
+{
+  "run_id": "20260417T072625Z",
+  "generated_at_utc": "2026-04-17T07:26:25Z",
+  "mode": "incremental_strict_sync",
+  "strict_filter_version": "strict-v3",
+  "repos_scanned": [
+    "sgl-project/sglang",
+    "vllm-project/vllm"
+  ],
+  "matched_pr_count": 18,
+  "repos_summary": {
+    "sgl-project/sglang": 18,
+    "vllm-project/vllm": 0
+  },
+  "category_counts": {
+    "kernel-fusion": 7,
+    "cuda-graph": 4,
+    "torch-compile": 5,
+    "low-precision-quantization": 4,
+    "attention-backend": 5,
+    "execution-batching": 1,
+    "communication": 1,
+    "memory-offload": 9,
+    "cache-reuse": 5,
+    "memory-efficiency": 3,
+    "scheduling-throughput": 4
+  },
+  "notes_zh": [
+    "本次按严格 diffusion 性能规则进行增量同步。",
+    "只保留带有明确性能目标和机制/benchmark 证据的 PR。",
+    "新增和更新 PR 会生成中文优化摘要，并可直接推送到钉钉。"
+  ],
+  "items": [
+    {
+      "repo": "sgl-project/sglang",
+      "number": 23025,
+      "title": "Optimize LTX2 modulation and two-stage warmup",
+      "status_zh": "open",
+      "techniques": [
+        "kernel-fusion",
+        "torch-compile"
+      ],
+      "summary_zh": "在 LTX-2.3 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 ltx_2.py, lora_pipeline.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/23025"
+    },
+    {
+      "repo": "sgl-project/sglang",
+      "number": 20816,
+      "title": "[Diffusion][CPU] Init CPU platform support for SGLang Diffusion",
+      "status_zh": "open",
+      "techniques": [
+        "kernel-fusion",
+        "attention-backend",
+        "memory-offload"
+      ],
+      "summary_zh": "在 Z-Image 热路径引入融合 kernel 或 fast path，压缩归一化、激活或 DiT kernel launch 开销。 主要改动涉及 cpu_worker.py, mps_fallback.py。",
+      "url": "https://github.com/sgl-project/sglang/pull/20816"
+    }
+  ],
+  "notify_delta": {
+    "added": 1,
+    "updated": 1,
+    "suppressed": 0,
+    "suppressed_ids": []
+  }
+}

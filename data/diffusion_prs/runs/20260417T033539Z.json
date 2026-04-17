@@ -1,0 +1,34 @@
+{
+  "run_id": "20260417T033539Z",
+  "generated_at_utc": "2026-04-17T03:35:39Z",
+  "mode": "incremental_strict_sync",
+  "strict_filter_version": "strict-v2",
+  "repos_scanned": [
+    "sgl-project/sglang",
+    "vllm-project/vllm"
+  ],
+  "matched_pr_count": 19,
+  "repos_summary": {
+    "sgl-project/sglang": 17,
+    "vllm-project/vllm": 2
+  },
+  "category_counts": {
+    "kernel-fusion": 8,
+    "cuda-graph": 4,
+    "torch-compile": 5,
+    "low-precision-quantization": 6,
+    "attention-backend": 5,
+    "execution-batching": 1,
+    "communication": 1,
+    "memory-offload": 9,
+    "cache-reuse": 6,
+    "memory-efficiency": 3,
+    "scheduling-throughput": 4
+  },
+  "notes_zh": [
+    "本次按严格 diffusion 性能规则进行增量同步。",
+    "只保留带有明确性能目标和机制/benchmark 证据的 PR。",
+    "新增和更新 PR 会生成中文优化摘要，并可直接推送到钉钉。"
+  ],
+  "items": []
+}
