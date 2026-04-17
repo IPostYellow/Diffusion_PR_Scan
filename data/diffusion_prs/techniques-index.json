@@ -1,0 +1,654 @@
+{
+  "generated_at": "2026-04-17T02:21:25Z",
+  "techniques": {
+    "kernel-fusion-compiler": [
+      {
+        "id": "sgl-project/sglang#23014",
+        "number": 23014,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[CI] install rust toolchain in docker images",
+        "updated_at": "2026-04-17T02:21:02Z",
+        "url": "https://github.com/sgl-project/sglang/pull/23014"
+      },
+      {
+        "id": "vllm-project/vllm#40084",
+        "number": 40084,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[WIP][Draft]Ray async scheduling with pp",
+        "updated_at": "2026-04-17T02:18:15Z",
+        "url": "https://github.com/vllm-project/vllm/pull/40084"
+      },
+      {
+        "id": "vllm-project/vllm#32415",
+        "number": 32415,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+        "updated_at": "2026-04-17T02:15:47Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32415"
+      },
+      {
+        "id": "sgl-project/sglang#21758",
+        "number": 21758,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "multi-item scoring test",
+        "updated_at": "2026-04-17T02:14:41Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21758"
+      },
+      {
+        "id": "sgl-project/sglang#21761",
+        "number": 21761,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "dynamic batch tokenizer testcases",
+        "updated_at": "2026-04-17T02:14:31Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21761"
+      },
+      {
+        "id": "sgl-project/sglang#22997",
+        "number": 22997,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Whisper] Automatic language detection via structured generation",
+        "updated_at": "2026-04-17T01:52:28Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22997"
+      }
+    ],
+    "memory-management": [
+      {
+        "id": "vllm-project/vllm#26624",
+        "number": 26624,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Feature][V1][P/D]: Support P/D num_cached_tokens in response usage",
+        "updated_at": "2026-04-17T02:18:23Z",
+        "url": "https://github.com/vllm-project/vllm/pull/26624"
+      },
+      {
+        "id": "vllm-project/vllm#40084",
+        "number": 40084,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[WIP][Draft]Ray async scheduling with pp",
+        "updated_at": "2026-04-17T02:18:15Z",
+        "url": "https://github.com/vllm-project/vllm/pull/40084"
+      },
+      {
+        "id": "vllm-project/vllm#32415",
+        "number": 32415,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+        "updated_at": "2026-04-17T02:15:47Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32415"
+      },
+      {
+        "id": "vllm-project/vllm#32476",
+        "number": 32476,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Doc] Clarify comment regarding partial block loading",
+        "updated_at": "2026-04-17T02:15:39Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32476"
+      },
+      {
+        "id": "sgl-project/sglang#21758",
+        "number": 21758,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "multi-item scoring test",
+        "updated_at": "2026-04-17T02:14:41Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21758"
+      },
+      {
+        "id": "sgl-project/sglang#21761",
+        "number": 21761,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "dynamic batch tokenizer testcases",
+        "updated_at": "2026-04-17T02:14:31Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21761"
+      },
+      {
+        "id": "sgl-project/sglang#22339",
+        "number": 22339,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:29Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22339"
+      },
+      {
+        "id": "sgl-project/sglang#20863",
+        "number": 20863,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Diffusion] Add mixed-resolution benchmark support (for #20762)",
+        "updated_at": "2026-04-17T02:10:21Z",
+        "url": "https://github.com/sgl-project/sglang/pull/20863"
+      },
+      {
+        "id": "sgl-project/sglang#23015",
+        "number": 23015,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:16Z",
+        "url": "https://github.com/sgl-project/sglang/pull/23015"
+      },
+      {
+        "id": "sgl-project/sglang#22998",
+        "number": 22998,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Skip torch.cuda.empty_cache() in weight update flush path",
+        "updated_at": "2026-04-17T01:54:09Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22998"
+      },
+      {
+        "id": "sgl-project/sglang#22997",
+        "number": 22997,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Whisper] Automatic language detection via structured generation",
+        "updated_at": "2026-04-17T01:52:28Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22997"
+      }
+    ],
+    "model-architecture": [
+      {
+        "id": "sgl-project/sglang#21758",
+        "number": 21758,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "multi-item scoring test",
+        "updated_at": "2026-04-17T02:14:41Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21758"
+      },
+      {
+        "id": "sgl-project/sglang#21761",
+        "number": 21761,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "dynamic batch tokenizer testcases",
+        "updated_at": "2026-04-17T02:14:31Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21761"
+      },
+      {
+        "id": "sgl-project/sglang#22015",
+        "number": 22015,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "EPD test",
+        "updated_at": "2026-04-17T02:14:21Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22015"
+      }
+    ],
+    "parallel-distributed": [
+      {
+        "id": "vllm-project/vllm#40084",
+        "number": 40084,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[WIP][Draft]Ray async scheduling with pp",
+        "updated_at": "2026-04-17T02:18:15Z",
+        "url": "https://github.com/vllm-project/vllm/pull/40084"
+      },
+      {
+        "id": "vllm-project/vllm#32415",
+        "number": 32415,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+        "updated_at": "2026-04-17T02:15:47Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32415"
+      },
+      {
+        "id": "vllm-project/vllm#32476",
+        "number": 32476,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Doc] Clarify comment regarding partial block loading",
+        "updated_at": "2026-04-17T02:15:39Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32476"
+      },
+      {
+        "id": "sgl-project/sglang#21761",
+        "number": 21761,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "dynamic batch tokenizer testcases",
+        "updated_at": "2026-04-17T02:14:31Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21761"
+      },
+      {
+        "id": "sgl-project/sglang#22015",
+        "number": 22015,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "EPD test",
+        "updated_at": "2026-04-17T02:14:21Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22015"
+      },
+      {
+        "id": "sgl-project/sglang#22998",
+        "number": 22998,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Skip torch.cuda.empty_cache() in weight update flush path",
+        "updated_at": "2026-04-17T01:54:09Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22998"
+      }
+    ],
+    "precision-quantization": [
+      {
+        "id": "vllm-project/vllm#40084",
+        "number": 40084,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[WIP][Draft]Ray async scheduling with pp",
+        "updated_at": "2026-04-17T02:18:15Z",
+        "url": "https://github.com/vllm-project/vllm/pull/40084"
+      },
+      {
+        "id": "vllm-project/vllm#32415",
+        "number": 32415,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+        "updated_at": "2026-04-17T02:15:47Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32415"
+      },
+      {
+        "id": "sgl-project/sglang#21758",
+        "number": 21758,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "multi-item scoring test",
+        "updated_at": "2026-04-17T02:14:41Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21758"
+      }
+    ],
+    "quality-ci": [
+      {
+        "id": "sgl-project/sglang#23014",
+        "number": 23014,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[CI] install rust toolchain in docker images",
+        "updated_at": "2026-04-17T02:21:02Z",
+        "url": "https://github.com/sgl-project/sglang/pull/23014"
+      },
+      {
+        "id": "vllm-project/vllm#26624",
+        "number": 26624,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Feature][V1][P/D]: Support P/D num_cached_tokens in response usage",
+        "updated_at": "2026-04-17T02:18:23Z",
+        "url": "https://github.com/vllm-project/vllm/pull/26624"
+      },
+      {
+        "id": "vllm-project/vllm#40084",
+        "number": 40084,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[WIP][Draft]Ray async scheduling with pp",
+        "updated_at": "2026-04-17T02:18:15Z",
+        "url": "https://github.com/vllm-project/vllm/pull/40084"
+      },
+      {
+        "id": "vllm-project/vllm#32415",
+        "number": 32415,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+        "updated_at": "2026-04-17T02:15:47Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32415"
+      },
+      {
+        "id": "vllm-project/vllm#32476",
+        "number": 32476,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Doc] Clarify comment regarding partial block loading",
+        "updated_at": "2026-04-17T02:15:39Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32476"
+      },
+      {
+        "id": "sgl-project/sglang#21758",
+        "number": 21758,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "multi-item scoring test",
+        "updated_at": "2026-04-17T02:14:41Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21758"
+      },
+      {
+        "id": "sgl-project/sglang#21761",
+        "number": 21761,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "dynamic batch tokenizer testcases",
+        "updated_at": "2026-04-17T02:14:31Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21761"
+      },
+      {
+        "id": "sgl-project/sglang#22015",
+        "number": 22015,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "EPD test",
+        "updated_at": "2026-04-17T02:14:21Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22015"
+      },
+      {
+        "id": "sgl-project/sglang#22339",
+        "number": 22339,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:29Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22339"
+      },
+      {
+        "id": "sgl-project/sglang#20863",
+        "number": 20863,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Diffusion] Add mixed-resolution benchmark support (for #20762)",
+        "updated_at": "2026-04-17T02:10:21Z",
+        "url": "https://github.com/sgl-project/sglang/pull/20863"
+      },
+      {
+        "id": "sgl-project/sglang#23015",
+        "number": 23015,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:16Z",
+        "url": "https://github.com/sgl-project/sglang/pull/23015"
+      },
+      {
+        "id": "sgl-project/sglang#22998",
+        "number": 22998,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Skip torch.cuda.empty_cache() in weight update flush path",
+        "updated_at": "2026-04-17T01:54:09Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22998"
+      },
+      {
+        "id": "sgl-project/sglang#22997",
+        "number": 22997,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Whisper] Automatic language detection via structured generation",
+        "updated_at": "2026-04-17T01:52:28Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22997"
+      }
+    ],
+    "runtime-io": [
+      {
+        "id": "vllm-project/vllm#26624",
+        "number": 26624,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Feature][V1][P/D]: Support P/D num_cached_tokens in response usage",
+        "updated_at": "2026-04-17T02:18:23Z",
+        "url": "https://github.com/vllm-project/vllm/pull/26624"
+      },
+      {
+        "id": "sgl-project/sglang#21758",
+        "number": 21758,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "multi-item scoring test",
+        "updated_at": "2026-04-17T02:14:41Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21758"
+      },
+      {
+        "id": "sgl-project/sglang#21761",
+        "number": 21761,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "dynamic batch tokenizer testcases",
+        "updated_at": "2026-04-17T02:14:31Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21761"
+      },
+      {
+        "id": "sgl-project/sglang#22015",
+        "number": 22015,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "EPD test",
+        "updated_at": "2026-04-17T02:14:21Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22015"
+      },
+      {
+        "id": "sgl-project/sglang#22339",
+        "number": 22339,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:29Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22339"
+      },
+      {
+        "id": "sgl-project/sglang#23015",
+        "number": 23015,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:16Z",
+        "url": "https://github.com/sgl-project/sglang/pull/23015"
+      },
+      {
+        "id": "sgl-project/sglang#22997",
+        "number": 22997,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Whisper] Automatic language detection via structured generation",
+        "updated_at": "2026-04-17T01:52:28Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22997"
+      }
+    ],
+    "scheduler-sampler": [
+      {
+        "id": "vllm-project/vllm#26624",
+        "number": 26624,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Feature][V1][P/D]: Support P/D num_cached_tokens in response usage",
+        "updated_at": "2026-04-17T02:18:23Z",
+        "url": "https://github.com/vllm-project/vllm/pull/26624"
+      },
+      {
+        "id": "vllm-project/vllm#40084",
+        "number": 40084,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[WIP][Draft]Ray async scheduling with pp",
+        "updated_at": "2026-04-17T02:18:15Z",
+        "url": "https://github.com/vllm-project/vllm/pull/40084"
+      },
+      {
+        "id": "vllm-project/vllm#32415",
+        "number": 32415,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+        "updated_at": "2026-04-17T02:15:47Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32415"
+      },
+      {
+        "id": "vllm-project/vllm#32476",
+        "number": 32476,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Doc] Clarify comment regarding partial block loading",
+        "updated_at": "2026-04-17T02:15:39Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32476"
+      },
+      {
+        "id": "sgl-project/sglang#21758",
+        "number": 21758,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "multi-item scoring test",
+        "updated_at": "2026-04-17T02:14:41Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21758"
+      },
+      {
+        "id": "sgl-project/sglang#21761",
+        "number": 21761,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "dynamic batch tokenizer testcases",
+        "updated_at": "2026-04-17T02:14:31Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21761"
+      },
+      {
+        "id": "sgl-project/sglang#22015",
+        "number": 22015,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "EPD test",
+        "updated_at": "2026-04-17T02:14:21Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22015"
+      },
+      {
+        "id": "sgl-project/sglang#22339",
+        "number": 22339,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:29Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22339"
+      },
+      {
+        "id": "sgl-project/sglang#23015",
+        "number": 23015,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:16Z",
+        "url": "https://github.com/sgl-project/sglang/pull/23015"
+      },
+      {
+        "id": "sgl-project/sglang#22998",
+        "number": 22998,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Skip torch.cuda.empty_cache() in weight update flush path",
+        "updated_at": "2026-04-17T01:54:09Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22998"
+      },
+      {
+        "id": "sgl-project/sglang#22997",
+        "number": 22997,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Whisper] Automatic language detection via structured generation",
+        "updated_at": "2026-04-17T01:52:28Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22997"
+      }
+    ],
+    "serving-pipeline": [
+      {
+        "id": "vllm-project/vllm#26624",
+        "number": 26624,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Feature][V1][P/D]: Support P/D num_cached_tokens in response usage",
+        "updated_at": "2026-04-17T02:18:23Z",
+        "url": "https://github.com/vllm-project/vllm/pull/26624"
+      },
+      {
+        "id": "vllm-project/vllm#40084",
+        "number": 40084,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[WIP][Draft]Ray async scheduling with pp",
+        "updated_at": "2026-04-17T02:18:15Z",
+        "url": "https://github.com/vllm-project/vllm/pull/40084"
+      },
+      {
+        "id": "vllm-project/vllm#32415",
+        "number": 32415,
+        "repo": "vllm-project/vllm",
+        "state": "open",
+        "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+        "updated_at": "2026-04-17T02:15:47Z",
+        "url": "https://github.com/vllm-project/vllm/pull/32415"
+      },
+      {
+        "id": "sgl-project/sglang#21758",
+        "number": 21758,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "multi-item scoring test",
+        "updated_at": "2026-04-17T02:14:41Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21758"
+      },
+      {
+        "id": "sgl-project/sglang#21761",
+        "number": 21761,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "dynamic batch tokenizer testcases",
+        "updated_at": "2026-04-17T02:14:31Z",
+        "url": "https://github.com/sgl-project/sglang/pull/21761"
+      },
+      {
+        "id": "sgl-project/sglang#22339",
+        "number": 22339,
+        "repo": "sgl-project/sglang",
+        "state": "closed",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:29Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22339"
+      },
+      {
+        "id": "sgl-project/sglang#20863",
+        "number": 20863,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Diffusion] Add mixed-resolution benchmark support (for #20762)",
+        "updated_at": "2026-04-17T02:10:21Z",
+        "url": "https://github.com/sgl-project/sglang/pull/20863"
+      },
+      {
+        "id": "sgl-project/sglang#23015",
+        "number": 23015,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Used for RL acceleration, historical request memory, and scheduling.",
+        "updated_at": "2026-04-17T02:10:16Z",
+        "url": "https://github.com/sgl-project/sglang/pull/23015"
+      },
+      {
+        "id": "sgl-project/sglang#22998",
+        "number": 22998,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "Skip torch.cuda.empty_cache() in weight update flush path",
+        "updated_at": "2026-04-17T01:54:09Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22998"
+      },
+      {
+        "id": "sgl-project/sglang#22997",
+        "number": 22997,
+        "repo": "sgl-project/sglang",
+        "state": "open",
+        "title": "[Whisper] Automatic language detection via structured generation",
+        "updated_at": "2026-04-17T01:52:28Z",
+        "url": "https://github.com/sgl-project/sglang/pull/22997"
+      }
+    ]
+  },
+  "total_prs": 13
+}

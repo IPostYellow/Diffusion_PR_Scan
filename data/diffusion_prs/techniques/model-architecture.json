@@ -1,0 +1,32 @@
+{
+  "prs": [
+    {
+      "id": "sgl-project/sglang#21758",
+      "number": 21758,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "title": "multi-item scoring test",
+      "updated_at": "2026-04-17T02:14:41Z",
+      "url": "https://github.com/sgl-project/sglang/pull/21758"
+    },
+    {
+      "id": "sgl-project/sglang#21761",
+      "number": 21761,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "title": "dynamic batch tokenizer testcases",
+      "updated_at": "2026-04-17T02:14:31Z",
+      "url": "https://github.com/sgl-project/sglang/pull/21761"
+    },
+    {
+      "id": "sgl-project/sglang#22015",
+      "number": 22015,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "title": "EPD test",
+      "updated_at": "2026-04-17T02:14:21Z",
+      "url": "https://github.com/sgl-project/sglang/pull/22015"
+    }
+  ],
+  "technique": "model-architecture"
+}

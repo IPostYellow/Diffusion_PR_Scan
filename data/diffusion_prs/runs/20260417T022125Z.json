@@ -1,0 +1,27 @@
+{
+  "delta_added_ids": [
+    "sgl-project/sglang#20863",
+    "sgl-project/sglang#21758",
+    "sgl-project/sglang#21761",
+    "sgl-project/sglang#22015",
+    "sgl-project/sglang#22339",
+    "sgl-project/sglang#22997",
+    "sgl-project/sglang#22998",
+    "sgl-project/sglang#23014",
+    "sgl-project/sglang#23015",
+    "vllm-project/vllm#26624",
+    "vllm-project/vllm#32415",
+    "vllm-project/vllm#32476",
+    "vllm-project/vllm#40084"
+  ],
+  "delta_updated_ids": [],
+  "matched_diffusion_prs": 13,
+  "repos": [
+    "sgl-project/sglang",
+    "vllm-project/vllm"
+  ],
+  "run_id": "20260417T022125Z",
+  "scanned_pr_candidates": 40,
+  "window_end_utc": "2026-04-17T02:21:25Z",
+  "window_start_utc": "1970-01-01T00:00:00Z"
+}

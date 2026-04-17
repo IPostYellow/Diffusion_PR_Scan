@@ -1,0 +1,32 @@
+{
+  "prs": [
+    {
+      "id": "vllm-project/vllm#40084",
+      "number": 40084,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "title": "[WIP][Draft]Ray async scheduling with pp",
+      "updated_at": "2026-04-17T02:18:15Z",
+      "url": "https://github.com/vllm-project/vllm/pull/40084"
+    },
+    {
+      "id": "vllm-project/vllm#32415",
+      "number": 32415,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+      "updated_at": "2026-04-17T02:15:47Z",
+      "url": "https://github.com/vllm-project/vllm/pull/32415"
+    },
+    {
+      "id": "sgl-project/sglang#21758",
+      "number": 21758,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "title": "multi-item scoring test",
+      "updated_at": "2026-04-17T02:14:41Z",
+      "url": "https://github.com/sgl-project/sglang/pull/21758"
+    }
+  ],
+  "technique": "precision-quantization"
+}

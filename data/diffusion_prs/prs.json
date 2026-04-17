@@ -1,0 +1,975 @@
+{
+  "generated_at": "2026-04-17T02:21:25Z",
+  "prs": {
+    "sgl-project/sglang#20863": {
+      "author": "fengyuanyu1",
+      "changed_files": [
+        "python/sglang/multimodal_gen/benchmarks/bench_offline_throughput.py",
+        "python/sglang/multimodal_gen/benchmarks/bench_serving.py",
+        "python/sglang/multimodal_gen/benchmarks/datasets.py"
+      ],
+      "closed_at": null,
+      "created_at": "2026-03-18T13:45:15Z",
+      "diffusion_hits": [
+        "diffusion",
+        "text-to-image"
+      ],
+      "draft": false,
+      "fingerprint": "d736c93136a78788697c8c31d057065d568c4f4d0672752a4c39ba359513cdc7",
+      "id": "sgl-project/sglang#20863",
+      "labels": [
+        "diffusion",
+        "run-ci"
+      ],
+      "merged_at": null,
+      "number": 20863,
+      "repo": "sgl-project/sglang",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "memory-management": [
+          "memory"
+        ],
+        "quality-ci": [
+          "benchmark",
+          "ci",
+          "test"
+        ],
+        "serving-pipeline": [
+          "serving",
+          "throughput"
+        ]
+      },
+      "techniques": [
+        "memory-management",
+        "quality-ci",
+        "serving-pipeline"
+      ],
+      "title": "[Diffusion] Add mixed-resolution benchmark support (for #20762)",
+      "updated_at": "2026-04-17T02:10:21Z",
+      "url": "https://github.com/sgl-project/sglang/pull/20863"
+    },
+    "sgl-project/sglang#21758": {
+      "author": "EdwardXuy",
+      "changed_files": [
+        ".github/workflows/full-test-npu.yml",
+        ".github/workflows/lint.yml",
+        ".github/workflows/nightly-test-npu.yml",
+        "python/sglang/test/ascend/output_capturer.py",
+        "python/sglang/test/ascend/test_ascend_utils.py",
+        "python/sglang/test/ascend/test_embedding_base.py",
+        "python/sglang/test/ascend/test_no_hf_reward_base.py",
+        "python/sglang/test/ascend/test_npu_logging.py",
+        "test/registered/ascend/basic_function/Custom_weight_loader/test_npu_remote_instance_weight_loader.py",
+        "test/registered/ascend/basic_function/Custom_weight_loader/test_npu_update_weights_from_tensor.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_disaggregation_hicache.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_enable_offload_kvcache.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_enable_offload_kvcache_cached_tokens.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hicache.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hicache_io_backend.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hicache_page.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hicache_parameters_1.py",
+        "test/registered/ascend/basic_function/Multi-Modal/test_npu_mm_limit.py",
+        "test/registered/ascend/basic_function/api_related/test_npu_api_related.py",
+        "test/registered/ascend/basic_function/api_related/test_npu_api_related_tool_call.py",
+        "test/registered/ascend/basic_function/api_related/test_npu_reasoning_content.py",
+        "test/registered/ascend/basic_function/api_related/test_npu_sampling_default.py",
+        "test/registered/ascend/basic_function/debug_tensor/test_npu_debug_tensor_dump_output_folder.py",
+        "test/registered/ascend/basic_function/debug_tensor/test_npu_debug_tensor_dumps.py",
+        "test/registered/ascend/basic_function/debug_tensor/test_npu_debug_tensor_input_file.py",
+        "test/registered/ascend/basic_function/export_metrics/test_npu_export_metrics.py",
+        "test/registered/ascend/basic_function/kernel_backends/test_npu_hybrid_attention_backend.py",
+        "test/registered/ascend/basic_function/kernel_backends/test_npu_json_mode.py",
+        "test/registered/ascend/basic_function/kernel_backends/test_npu_mm_attention_backend.py",
+        "test/registered/ascend/basic_function/kernel_backends/test_npu_sampling_backend.py",
+        "test/registered/ascend/basic_function/logging/test_npu_crash_dump.py",
+        "test/registered/ascend/basic_function/logging/test_npu_decode_log_interval.py",
+        "test/registered/ascend/basic_function/logging/test_npu_enable_metrics_for_all_scheduler.py",
+        "test/registered/ascend/basic_function/logging/test_npu_enable_request_time_stats_logging.py",
+        "test/registered/ascend/basic_function/logging/test_npu_gc_warning_threshold.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_exclude_prefixes.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_level.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_request_level.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_request_target.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_requests_format.py",
+        "test/registered/ascend/basic_function/logging/test_npu_metrics.py",
+        "test/registered/ascend/basic_function/logging/test_npu_metrics_tokenizer_label.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_abort_on_priority_when_disabled.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_no_chunked_prefill.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_prefill_delayer_buckets.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_prefill_max_requests.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_priority_scheduling.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_priority_scheduling_preemption_threshold.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_radix_attention.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_request_length_validation.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_request_queue_validation.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_schedule_conservativeness.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_schedule_low_priority_values_first.py",
+        "test/registered/ascend/basic_function/model_override/test_npu_model_override_args.py",
+        "test/registered/ascend/basic_function/model_tokenizer/test_npu_model_tokenizer.py",
+        "test/registered/ascend/basic_function/model_tokenizer/test_npu_model_tokenizer_multimodal.py",
+        "test/registered/ascend/basic_function/model_tokenizer/test_npu_openai_embedding.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/delete/test_npu_torch_compile.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_allow_auto_truncate.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_batch_overlap.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_delete_ckpt_after_loading.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_disable_chunked_prefix_cache.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_disable_cuda_graph_padding.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_disable_shared_experts_fusion.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_disable_tokenizer_batch_decode.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_cudagraph_gc.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_custom_logit_processor.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_mixed_chunk.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_profile_cuda_graph.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_return_routed_experts.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_tokenizer_batch_encode.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_keep_mm_feature_on_device.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_numa_node.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_openai_server_hidden_states.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_scheduler_recv_interval.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_torch_compile_moe.py",
+        "test/registered/ascend/basic_function/parallel_strategy/data_parallelism/test_npu_load_balance_method.py",
+        "test/registered/ascend/basic_function/parallel_strategy/data_parallelism/test_npu_load_balance_method_PD_disaggregation.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_deepseek_R1_0528_w4a8_per_channel.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_deepseek_v2.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_qwen3_235b_a22b_w8a8.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_qwen3_30b_a3b_w8a8.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_deepseek_R1_0528_w4a8_per_channel.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_deepseek_v2.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_qwen3_235b_a22b_w8a8.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_qwen3_30b_a3b_w8a8.py",
+        "test/registered/ascend/basic_function/parameter/test_npu_batch_matmul_transpose.py",
+        "test/registered/ascend/basic_function/parameter/test_npu_build_tree.py",
+        "test/registered/ascend/basic_function/parameter/test_npu_input_embeddings.py",
+        "test/registered/ascend/basic_function/parameter/test_npu_multi_item_scoring_softmax.py",
+        "test/registered/ascend/basic_function/parameter/test_npu_retract_decode.py",
+        "test/registered/ascend/basic_function/parameter/test_npu_start_profile.py",
+        "test/registered/ascend/basic_function/pd_disaggregation/test_npu_pd_disaggregation.py",
+        "test/registered/ascend/basic_function/quantization_and_data_type/test_npu_dtype.py",
+        "test/registered/ascend/basic_function/quantization_and_data_type/test_npu_enable_fp32_lm_head.py",
+        "test/registered/ascend/basic_function/quantization_and_data_type/test_npu_kv_cache_dtype.py",
+        "test/registered/ascend/basic_function/runtime_options/test_npu_download_dir.py",
+        "test/registered/ascend/basic_function/runtime_options/test_npu_gpu_id.py",
+        "test/registered/ascend/basic_function/runtime_options/test_npu_random_seed.py",
+        "test/registered/ascend/basic_function/runtime_options/test_npu_skip_tokenizer_init.py"
+      ],
+      "closed_at": "2026-04-17T02:14:40Z",
+      "created_at": "2026-03-31T11:12:28Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": true,
+      "fingerprint": "4851f9ffa908f8a879dc23b2ccc0eded98bb491626b0bc308aad7cba1e2e8995",
+      "id": "sgl-project/sglang#21758",
+      "labels": [
+        "Multi-modal",
+        "deepseek",
+        "hicache",
+        "npu"
+      ],
+      "merged_at": null,
+      "number": 21758,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "kernel-fusion-compiler": [
+          "compile"
+        ],
+        "memory-management": [
+          "cache",
+          "memory",
+          "offload"
+        ],
+        "model-architecture": [
+          "attention"
+        ],
+        "precision-quantization": [
+          "quant"
+        ],
+        "quality-ci": [
+          "ci",
+          "fix",
+          "test"
+        ],
+        "runtime-io": [
+          "decode",
+          "encode"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "batch",
+          "pipeline"
+        ]
+      },
+      "techniques": [
+        "kernel-fusion-compiler",
+        "memory-management",
+        "model-architecture",
+        "precision-quantization",
+        "quality-ci",
+        "runtime-io",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "multi-item scoring test",
+      "updated_at": "2026-04-17T02:14:41Z",
+      "url": "https://github.com/sgl-project/sglang/pull/21758"
+    },
+    "sgl-project/sglang#21761": {
+      "author": "EdwardXuy",
+      "changed_files": [
+        ".github/workflows/full-test-npu.yml",
+        ".github/workflows/lint.yml",
+        ".github/workflows/nightly-test-npu.yml",
+        "python/sglang/test/ascend/output_capturer.py",
+        "python/sglang/test/ascend/test_ascend_utils.py",
+        "python/sglang/test/ascend/test_embedding_base.py",
+        "python/sglang/test/ascend/test_no_hf_reward_base.py",
+        "python/sglang/test/ascend/test_npu_logging.py",
+        "python/sglang/test/ascend/vlm_utils.py",
+        "test/registered/ascend/basic_function/Custom_weight_loader/test_npu_remote_instance_weight_loader.py",
+        "test/registered/ascend/basic_function/Custom_weight_loader/test_npu_update_weights_from_tensor.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_disaggregation_hicache.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_enable_offload_kvcache.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_enable_offload_kvcache_cached_tokens.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hicache.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hicache_io_backend.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hicache_page.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hicache_parameters_1.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hierarchical_cache_mla.py",
+        "test/registered/ascend/basic_function/HiCache/test_npu_hierarchical_cache_ttft_mha.py",
+        "test/registered/ascend/basic_function/Multi-Modal/test_npu_mm_limit.py",
+        "test/registered/ascend/basic_function/api_related/test_npu_api_related.py",
+        "test/registered/ascend/basic_function/api_related/test_npu_api_related_tool_call.py",
+        "test/registered/ascend/basic_function/api_related/test_npu_reasoning_content.py",
+        "test/registered/ascend/basic_function/api_related/test_npu_sampling_default.py",
+        "test/registered/ascend/basic_function/config/config.yaml",
+        "test/registered/ascend/basic_function/config/test_npu_config.py",
+        "test/registered/ascend/basic_function/debug_tensor/test_npu_debug_tensor_dump_output_folder.py",
+        "test/registered/ascend/basic_function/debug_tensor/test_npu_debug_tensor_dumps.py",
+        "test/registered/ascend/basic_function/debug_tensor/test_npu_debug_tensor_input_file.py",
+        "test/registered/ascend/basic_function/export_metrics/test_npu_export_metrics.py",
+        "test/registered/ascend/basic_function/forward/test_npu_forward_hooks.py",
+        "test/registered/ascend/basic_function/kernel_backends/test_npu_hybrid_attention_backend.py",
+        "test/registered/ascend/basic_function/kernel_backends/test_npu_json_mode.py",
+        "test/registered/ascend/basic_function/kernel_backends/test_npu_mm_attention_backend.py",
+        "test/registered/ascend/basic_function/kernel_backends/test_npu_sampling_backend.py",
+        "test/registered/ascend/basic_function/logging/test_npu_crash_dump.py",
+        "test/registered/ascend/basic_function/logging/test_npu_decode_log_interval.py",
+        "test/registered/ascend/basic_function/logging/test_npu_enable_metrics_for_all_scheduler.py",
+        "test/registered/ascend/basic_function/logging/test_npu_enable_request_time_stats_logging.py",
+        "test/registered/ascend/basic_function/logging/test_npu_gc_warning_threshold.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_exclude_prefixes.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_level.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_request_level.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_request_target.py",
+        "test/registered/ascend/basic_function/logging/test_npu_log_requests_format.py",
+        "test/registered/ascend/basic_function/logging/test_npu_metrics.py",
+        "test/registered/ascend/basic_function/logging/test_npu_metrics_tokenizer_label.py",
+        "test/registered/ascend/basic_function/lora/test_npu_lora_overlap_loading.py",
+        "test/registered/ascend/basic_function/mambacache/test_npu_mamba_cache.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_abort_on_priority_when_disabled.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_no_chunked_prefill.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_prefill_delayer_buckets.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_prefill_max_requests.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_priority_scheduling.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_priority_scheduling_preemption_threshold.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_radix_attention.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_request_length_validation.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_request_queue_validation.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_schedule_conservativeness.py",
+        "test/registered/ascend/basic_function/memory_and_scheduling/test_npu_schedule_low_priority_values_first.py",
+        "test/registered/ascend/basic_function/model_override/test_npu_model_override_args.py",
+        "test/registered/ascend/basic_function/model_tokenizer/test_npu_model_tokenizer.py",
+        "test/registered/ascend/basic_function/model_tokenizer/test_npu_model_tokenizer_multimodal.py",
+        "test/registered/ascend/basic_function/model_tokenizer/test_npu_openai_embedding.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_allow_auto_truncate.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_batch_overlap.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_delete_ckpt_after_loading.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_disable_cuda_graph_padding.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_disable_tokenizer_batch_decode.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_cudagraph_gc.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_custom_logit_processor.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_mixed_chunk.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_profile_cuda_graph.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_return_routed_experts.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_enable_tokenizer_batch_encode.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_keep_mm_feature_on_device.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_numa_node.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_openai_server_hidden_states.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_scheduler_recv_interval.py",
+        "test/registered/ascend/basic_function/optimization_debug_options/test_npu_torch_compile_moe.py",
+        "test/registered/ascend/basic_function/parallel_strategy/data_parallelism/test_npu_load_balance_method.py",
+        "test/registered/ascend/basic_function/parallel_strategy/data_parallelism/test_npu_load_balance_method_PD_disaggregation.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_deepseek_R1_0528_w4a8_per_channel.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_deepseek_v2.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_qwen3_235b_a22b_w8a8.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_qwen3_30b_a3b_w8a8.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_auto_qwen3_next.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_deepseek_R1_0528_w4a8_per_channel.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_deepseek_v2.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_qwen3_235b_a22b_w8a8.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_qwen3_30b_a3b_w8a8.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_deepep_low_latency_qwen3_next.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_eplb_min_rebalancing_utilization_threshold.py",
+        "test/registered/ascend/basic_function/parallel_strategy/expert_parallelism/test_npu_moe_runner_backend.py",
+        "test/registered/ascend/basic_function/parameter/HTTP/test_npu_grpc_mode.py",
+        "test/registered/ascend/basic_function/parameter/HTTP/test_npu_nccl_port.py",
+        "test/registered/ascend/basic_function/parameter/HTTP/test_npu_skip_warmup.py",
+        "test/registered/ascend/basic_function/parameter/test_npu_batch_matmul_transpose.py",
+        "test/registered/ascend/basic_function/parameter/test_npu_build_tree.py"
+      ],
+      "closed_at": "2026-04-17T02:14:31Z",
+      "created_at": "2026-03-31T12:44:55Z",
+      "diffusion_hits": [
+        "lora",
+        "scheduler"
+      ],
+      "draft": true,
+      "fingerprint": "94781fee946a2b9acc2d1e9f675bebf15e21b2ee2a3b65e0f61fd31df7d25598",
+      "id": "sgl-project/sglang#21761",
+      "labels": [
+        "Multi-modal",
+        "deepseek",
+        "hicache",
+        "lora",
+        "npu"
+      ],
+      "merged_at": null,
+      "number": 21761,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "kernel-fusion-compiler": [
+          "compile"
+        ],
+        "memory-management": [
+          "cache",
+          "memory",
+          "offload"
+        ],
+        "model-architecture": [
+          "attention",
+          "lora"
+        ],
+        "parallel-distributed": [
+          "data parallel",
+          "tensor parallel"
+        ],
+        "quality-ci": [
+          "benchmark",
+          "ci",
+          "fix",
+          "test"
+        ],
+        "runtime-io": [
+          "decode",
+          "encode"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "batch",
+          "pipeline",
+          "throughput"
+        ]
+      },
+      "techniques": [
+        "kernel-fusion-compiler",
+        "memory-management",
+        "model-architecture",
+        "parallel-distributed",
+        "quality-ci",
+        "runtime-io",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "dynamic batch tokenizer testcases",
+      "updated_at": "2026-04-17T02:14:31Z",
+      "url": "https://github.com/sgl-project/sglang/pull/21761"
+    },
+    "sgl-project/sglang#22015": {
+      "author": "EdwardXuy",
+      "changed_files": [
+        ".github/workflows/lint.yml",
+        "test/registered/ascend/basic_function/EPD/test_npu_adaptive_dispatch_to_encoder.py",
+        "test/registered/ascend/basic_function/EPD/test_npu_disaggregated_vlm.py"
+      ],
+      "closed_at": "2026-04-17T02:14:21Z",
+      "created_at": "2026-04-03T06:51:35Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "a64342bd9bf0e8c8bd25564322c6f62f9401611015ea1beed491d77f6bc805b1",
+      "id": "sgl-project/sglang#22015",
+      "labels": [
+        "Multi-modal",
+        "npu"
+      ],
+      "merged_at": null,
+      "number": 22015,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "model-architecture": [
+          "attention"
+        ],
+        "parallel-distributed": [
+          "distributed"
+        ],
+        "quality-ci": [
+          "benchmark",
+          "fix",
+          "regression",
+          "test"
+        ],
+        "runtime-io": [
+          "encode"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ]
+      },
+      "techniques": [
+        "model-architecture",
+        "parallel-distributed",
+        "quality-ci",
+        "runtime-io",
+        "scheduler-sampler"
+      ],
+      "title": "EPD test",
+      "updated_at": "2026-04-17T02:14:21Z",
+      "url": "https://github.com/sgl-project/sglang/pull/22015"
+    },
+    "sgl-project/sglang#22339": {
+      "author": "LeeNTC",
+      "changed_files": [
+        "docs/advanced_features/server_arguments.md",
+        "docs/platforms/ascend/ascend_npu_support_features.md",
+        "python/sglang/srt/managers/schedule_batch.py",
+        "python/sglang/srt/managers/scheduler.py",
+        "python/sglang/srt/server_args.py"
+      ],
+      "closed_at": "2026-04-17T02:10:29Z",
+      "created_at": "2026-04-08T07:57:37Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "024be452173e0d3f2fd74b7145f0edf4b6196f50857d1150c883f35695ca61e3",
+      "id": "sgl-project/sglang#22339",
+      "labels": [
+        "documentation",
+        "npu"
+      ],
+      "merged_at": null,
+      "number": 22339,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "memory-management": [
+          "memory"
+        ],
+        "quality-ci": [
+          "benchmark",
+          "ci",
+          "test"
+        ],
+        "runtime-io": [
+          "decode"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "batch",
+          "serving",
+          "throughput"
+        ]
+      },
+      "techniques": [
+        "memory-management",
+        "quality-ci",
+        "runtime-io",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "Used for RL acceleration, historical request memory, and scheduling.",
+      "updated_at": "2026-04-17T02:10:29Z",
+      "url": "https://github.com/sgl-project/sglang/pull/22339"
+    },
+    "sgl-project/sglang#22997": {
+      "author": "shenxiul",
+      "changed_files": [
+        "python/sglang/srt/entrypoints/openai/serving_transcription.py",
+        "python/sglang/srt/entrypoints/openai/transcription_adapters/base.py",
+        "python/sglang/srt/entrypoints/openai/transcription_adapters/whisper.py",
+        "python/sglang/srt/entrypoints/warmup.py",
+        "python/sglang/srt/multimodal/processors/whisper.py"
+      ],
+      "closed_at": null,
+      "created_at": "2026-04-16T21:49:52Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "a6d86fd934da4bfbf83d530210755926e85312898b4053f7d8e29cd7798bfff0",
+      "id": "sgl-project/sglang#22997",
+      "labels": [],
+      "merged_at": null,
+      "number": 22997,
+      "repo": "sgl-project/sglang",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "kernel-fusion-compiler": [
+          "compile",
+          "fused"
+        ],
+        "memory-management": [
+          "cache"
+        ],
+        "quality-ci": [
+          "benchmark",
+          "ci",
+          "test"
+        ],
+        "runtime-io": [
+          "decode",
+          "encode"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "serving",
+          "throughput"
+        ]
+      },
+      "techniques": [
+        "kernel-fusion-compiler",
+        "memory-management",
+        "quality-ci",
+        "runtime-io",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "[Whisper] Automatic language detection via structured generation",
+      "updated_at": "2026-04-17T01:52:28Z",
+      "url": "https://github.com/sgl-project/sglang/pull/22997"
+    },
+    "sgl-project/sglang#22998": {
+      "author": "shenxiul",
+      "changed_files": [
+        "python/sglang/srt/managers/io_struct.py",
+        "python/sglang/srt/managers/scheduler.py",
+        "python/sglang/srt/managers/scheduler_update_weights_mixin.py"
+      ],
+      "closed_at": null,
+      "created_at": "2026-04-16T22:07:42Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "d9c60c8c2ab7b1222ca5d52b64e1f2134297c24d5565ebf6e8e8a546083a5d71",
+      "id": "sgl-project/sglang#22998",
+      "labels": [
+        "run-ci"
+      ],
+      "merged_at": null,
+      "number": 22998,
+      "repo": "sgl-project/sglang",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "memory-management": [
+          "cache",
+          "kv cache"
+        ],
+        "parallel-distributed": [
+          "distributed"
+        ],
+        "quality-ci": [
+          "ci",
+          "regression",
+          "test"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "stream"
+        ]
+      },
+      "techniques": [
+        "memory-management",
+        "parallel-distributed",
+        "quality-ci",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "Skip torch.cuda.empty_cache() in weight update flush path",
+      "updated_at": "2026-04-17T01:54:09Z",
+      "url": "https://github.com/sgl-project/sglang/pull/22998"
+    },
+    "sgl-project/sglang#23014": {
+      "author": "alexnails",
+      "changed_files": [
+        "docker/Dockerfile",
+        "docker/diffusion.Dockerfile",
+        "docker/npu.Dockerfile",
+        "docker/xeon.Dockerfile",
+        "docker/xpu.Dockerfile"
+      ],
+      "closed_at": null,
+      "created_at": "2026-04-17T02:06:09Z",
+      "diffusion_hits": [
+        "diffusion"
+      ],
+      "draft": false,
+      "fingerprint": "876467d9d18ddb5063e69f43920799fdd993a3ddd7a6f7a7b26d91c05bd75af5",
+      "id": "sgl-project/sglang#23014",
+      "labels": [
+        "npu"
+      ],
+      "merged_at": null,
+      "number": 23014,
+      "repo": "sgl-project/sglang",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "kernel-fusion-compiler": [
+          "compile"
+        ],
+        "quality-ci": [
+          "ci",
+          "test"
+        ]
+      },
+      "techniques": [
+        "kernel-fusion-compiler",
+        "quality-ci"
+      ],
+      "title": "[CI] install rust toolchain in docker images",
+      "updated_at": "2026-04-17T02:21:02Z",
+      "url": "https://github.com/sgl-project/sglang/pull/23014"
+    },
+    "sgl-project/sglang#23015": {
+      "author": "LeeNTC",
+      "changed_files": [
+        "docs/advanced_features/server_arguments.md",
+        "docs/platforms/ascend/ascend_npu_support_features.md",
+        "python/sglang/srt/managers/schedule_batch.py",
+        "python/sglang/srt/managers/scheduler.py",
+        "python/sglang/srt/server_args.py"
+      ],
+      "closed_at": null,
+      "created_at": "2026-04-17T02:10:03Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "404dc0c4a66bae090598a2c701ef647f4975aee3d716ee3b7d30adf5ced581d5",
+      "id": "sgl-project/sglang#23015",
+      "labels": [
+        "documentation",
+        "npu"
+      ],
+      "merged_at": null,
+      "number": 23015,
+      "repo": "sgl-project/sglang",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "memory-management": [
+          "memory"
+        ],
+        "quality-ci": [
+          "benchmark",
+          "ci",
+          "test"
+        ],
+        "runtime-io": [
+          "decode"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "batch",
+          "serving",
+          "throughput"
+        ]
+      },
+      "techniques": [
+        "memory-management",
+        "quality-ci",
+        "runtime-io",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "Used for RL acceleration, historical request memory, and scheduling.",
+      "updated_at": "2026-04-17T02:10:16Z",
+      "url": "https://github.com/sgl-project/sglang/pull/23015"
+    },
+    "vllm-project/vllm#26624": {
+      "author": "vlan79",
+      "changed_files": [
+        "vllm/v1/core/sched/scheduler.py",
+        "vllm/v1/request.py"
+      ],
+      "closed_at": null,
+      "created_at": "2025-10-11T07:32:58Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "951372fe4b08ba489cf38a9a599ef72444ce084f37ee84ea2e35d30e2846b4db",
+      "id": "vllm-project/vllm#26624",
+      "labels": [
+        "kv-connector",
+        "stale",
+        "v1"
+      ],
+      "merged_at": null,
+      "number": 26624,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "memory-management": [
+          "cache",
+          "kv cache"
+        ],
+        "quality-ci": [
+          "bugfix",
+          "ci",
+          "fix",
+          "test"
+        ],
+        "runtime-io": [
+          "decode"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "batch",
+          "stream"
+        ]
+      },
+      "techniques": [
+        "memory-management",
+        "quality-ci",
+        "runtime-io",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "[Feature][V1][P/D]: Support P/D num_cached_tokens in response usage",
+      "updated_at": "2026-04-17T02:18:23Z",
+      "url": "https://github.com/vllm-project/vllm/pull/26624"
+    },
+    "vllm-project/vllm#32415": {
+      "author": "TomerBN-Nvidia",
+      "changed_files": [
+        "tests/model_executor/test_routed_experts_capturer.py",
+        "vllm/model_executor/layers/fused_moe/routed_experts_capturer.py",
+        "vllm/v1/core/sched/scheduler.py",
+        "vllm/v1/worker/gpu_model_runner.py"
+      ],
+      "closed_at": null,
+      "created_at": "2026-01-15T14:35:56Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "f482db8354fe6856dd6c204188ad0d49059d8eec09273b4ec176859edea718d7",
+      "id": "vllm-project/vllm#32415",
+      "labels": [
+        "needs-rebase",
+        "stale",
+        "v1"
+      ],
+      "merged_at": null,
+      "number": 32415,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "kernel-fusion-compiler": [
+          "fused"
+        ],
+        "memory-management": [
+          "cache",
+          "memory"
+        ],
+        "parallel-distributed": [
+          "tensor parallel"
+        ],
+        "precision-quantization": [
+          "bf16"
+        ],
+        "quality-ci": [
+          "benchmark",
+          "ci",
+          "fix",
+          "test"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "async",
+          "stream",
+          "throughput"
+        ]
+      },
+      "techniques": [
+        "kernel-fusion-compiler",
+        "memory-management",
+        "parallel-distributed",
+        "precision-quantization",
+        "quality-ci",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+      "updated_at": "2026-04-17T02:15:47Z",
+      "url": "https://github.com/vllm-project/vllm/pull/32415"
+    },
+    "vllm-project/vllm#32476": {
+      "author": "ShadowNearby",
+      "changed_files": [
+        "vllm/distributed/kv_transfer/kv_connector/v1/offloading_connector.py"
+      ],
+      "closed_at": null,
+      "created_at": "2026-01-16T14:12:30Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "8f692cca71d431170ab0da7e7e88a3105d8650f532925157daa27a2d92990dbf",
+      "id": "vllm-project/vllm#32476",
+      "labels": [
+        "kv-connector",
+        "stale"
+      ],
+      "merged_at": null,
+      "number": 32476,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "memory-management": [
+          "offload"
+        ],
+        "parallel-distributed": [
+          "distributed"
+        ],
+        "quality-ci": [
+          "fix",
+          "test"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ]
+      },
+      "techniques": [
+        "memory-management",
+        "parallel-distributed",
+        "quality-ci",
+        "scheduler-sampler"
+      ],
+      "title": "[Doc] Clarify comment regarding partial block loading",
+      "updated_at": "2026-04-17T02:15:39Z",
+      "url": "https://github.com/vllm-project/vllm/pull/32476"
+    },
+    "vllm-project/vllm#40084": {
+      "author": "R2-Y",
+      "changed_files": [
+        "tests/v1/e2e/general/test_async_scheduling.py",
+        "vllm/config/vllm.py",
+        "vllm/profiler/wrapper.py",
+        "vllm/v1/engine/core.py",
+        "vllm/v1/executor/ray_executor.py",
+        "vllm/v1/executor/ray_utils.py",
+        "vllm/v1/worker/gpu_model_runner.py",
+        "vllm/v1/worker/gpu_worker.py"
+      ],
+      "closed_at": null,
+      "created_at": "2026-04-17T02:16:29Z",
+      "diffusion_hits": [
+        "scheduler"
+      ],
+      "draft": false,
+      "fingerprint": "890945a575bd2adb84cce698c785313c99e491cf90a308a7fbe7f4e5b38c64a4",
+      "id": "vllm-project/vllm#40084",
+      "labels": [
+        "needs-rebase",
+        "v1"
+      ],
+      "merged_at": null,
+      "number": 40084,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "synced_at": "2026-04-17T02:21:25Z",
+      "technique_hits": {
+        "kernel-fusion-compiler": [
+          "compile"
+        ],
+        "memory-management": [
+          "cache",
+          "kv cache",
+          "memory"
+        ],
+        "parallel-distributed": [
+          "distributed",
+          "pipeline parallel"
+        ],
+        "precision-quantization": [
+          "fp8"
+        ],
+        "quality-ci": [
+          "ci",
+          "fix",
+          "test"
+        ],
+        "scheduler-sampler": [
+          "scheduler"
+        ],
+        "serving-pipeline": [
+          "async",
+          "batch",
+          "pipeline",
+          "stream",
+          "throughput"
+        ]
+      },
+      "techniques": [
+        "kernel-fusion-compiler",
+        "memory-management",
+        "parallel-distributed",
+        "precision-quantization",
+        "quality-ci",
+        "scheduler-sampler",
+        "serving-pipeline"
+      ],
+      "title": "[WIP][Draft]Ray async scheduling with pp",
+      "updated_at": "2026-04-17T02:18:15Z",
+      "url": "https://github.com/vllm-project/vllm/pull/40084"
+    }
+  },
+  "repos": [
+    "sgl-project/sglang",
+    "vllm-project/vllm"
+  ],
+  "total_prs": 13
+}

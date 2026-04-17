@@ -1,0 +1,59 @@
+{
+  "prs": [
+    {
+      "id": "vllm-project/vllm#40084",
+      "number": 40084,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "title": "[WIP][Draft]Ray async scheduling with pp",
+      "updated_at": "2026-04-17T02:18:15Z",
+      "url": "https://github.com/vllm-project/vllm/pull/40084"
+    },
+    {
+      "id": "vllm-project/vllm#32415",
+      "number": 32415,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "title": "[Fix] Fix buffer sizing and memory handling for routed-expert return in TP",
+      "updated_at": "2026-04-17T02:15:47Z",
+      "url": "https://github.com/vllm-project/vllm/pull/32415"
+    },
+    {
+      "id": "vllm-project/vllm#32476",
+      "number": 32476,
+      "repo": "vllm-project/vllm",
+      "state": "open",
+      "title": "[Doc] Clarify comment regarding partial block loading",
+      "updated_at": "2026-04-17T02:15:39Z",
+      "url": "https://github.com/vllm-project/vllm/pull/32476"
+    },
+    {
+      "id": "sgl-project/sglang#21761",
+      "number": 21761,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "title": "dynamic batch tokenizer testcases",
+      "updated_at": "2026-04-17T02:14:31Z",
+      "url": "https://github.com/sgl-project/sglang/pull/21761"
+    },
+    {
+      "id": "sgl-project/sglang#22015",
+      "number": 22015,
+      "repo": "sgl-project/sglang",
+      "state": "closed",
+      "title": "EPD test",
+      "updated_at": "2026-04-17T02:14:21Z",
+      "url": "https://github.com/sgl-project/sglang/pull/22015"
+    },
+    {
+      "id": "sgl-project/sglang#22998",
+      "number": 22998,
+      "repo": "sgl-project/sglang",
+      "state": "open",
+      "title": "Skip torch.cuda.empty_cache() in weight update flush path",
+      "updated_at": "2026-04-17T01:54:09Z",
+      "url": "https://github.com/sgl-project/sglang/pull/22998"
+    }
+  ],
+  "technique": "parallel-distributed"
+}
