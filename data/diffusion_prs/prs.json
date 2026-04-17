@@ -125,7 +125,7 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "融合 LTX-2 的 RMSNorm+scale/shift 调制到 CuTeDSL/Triton kernel，并优化两阶段 warmup 流程。E2E 延迟下降约 7.84%（37.7s→34.7s，H100）。",
-      "evidence_zh": "Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.；| End-to-end, warmup excluded | 37.684 s | 34.728 s | 7.84% ",
+      "evidence_zh": "Workload: `Lightricks/LTX-2.3` one-stage T2V, 768x512, 121 frames, 24 fps, 30 steps, guidance scale 3.0, seed 1234, 2x H100, native `LTX2Pipeline`, `--warmup`, no `torch.compile`.",
       "status_zh": "open",
       "synced_at": "2026-04-17T07:26:25Z",
       "fingerprint": "827e35215dc4e042a9f11bd44944da9d77d7b02050560307d8abdb886093ce41"
@@ -698,7 +698,7 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "将 Qwen-Image 的 CFG 条件/无条件两次前向合并为单次 batched forward，减少每步 denoising 的重复 launch 开销。",
-      "evidence_zh": "[03-12 08:39:16] Peak GPU memory: 63.26 GB, Peak allocated: 61.10 GB, Memory pool overhead: 2.17 GB (3.4%), Remaining GPU memory at peak: 77.14 GB. Components that could stay resident (based on the last request workload)；[03-12 08:39:16] Me",
+      "evidence_zh": "峰值显存 63.26 GB，详见 PR 描述中的 benchmark 日志。",
       "status_zh": "closed-unmerged",
       "synced_at": "2026-04-17T07:11:38Z",
       "fingerprint": "65e47070a195174621bfd0d0f8c8a04db9b2cadc50b34cd8498eeea3fd2f06ab"
@@ -828,7 +828,7 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "为 FLUX 的 diffusers backend 接入 CUDA Graph 捕获，减少 denoising 循环中的 host launch gap，降低推理延迟。",
-      "evidence_zh": "[03-04 03:52:28] Peak GPU memory: 31.51 GB, Peak allocated: 27.30 GB, Memory pool overhead: 4.21 GB (13.4%), Remaining GPU memory at peak: 108.89 GB. Components that could stay resident (based on the last request workloa；[03-04 03:52:29] Me",
+      "evidence_zh": "峰值显存 31.51 GB，详见 PR 描述中的 benchmark 日志。",
       "status_zh": "closed-unmerged",
       "synced_at": "2026-04-17T07:11:38Z",
       "fingerprint": "0ec8b741193ffb6430b1012db71819d3869e545d2a1de1dd50269995196d60c3"
@@ -1050,7 +1050,7 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "为 diffusion scheduler 引入动态批处理（max batch size + delay），在多个 text-to-image 模型上吞吐提升最高 29.6%，平均延迟降低 22.4%，P99 延迟降低 31.8%。",
-      "evidence_zh": "Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P；| Model | Throughpu",
+      "evidence_zh": "Added dynamic batching (with max batch size + delay) to the diffusion scheduler. Across the tested text-to-image models, dynamic batching gave up to +29.6% higher throughput, -22.4% lower mean latency, and -31.8% lower P",
       "status_zh": "open",
       "synced_at": "2026-04-17T07:11:38Z",
       "fingerprint": "23aec28f6400a9e9861ea99b68bf7974d41bcaa2fa289dfdebd664d9832caa8d"
@@ -1926,7 +1926,7 @@
       "summary_version": "strict-v3-llm",
       "strict_filter_version": "strict-v3",
       "summary_zh": "将 diffusion pipeline 的 torch.compile 默认模式从 max-autotune 改为 default，消除 1.47-1.68x denoising 回退，同时加速 text encoding（2x）和 VAE decode（1.9x）。",
-      "evidence_zh": "Observations: max-autotune causes 1.47-1.68x denoising regression and 30s+ warmup on Qwen. default mode keeps denoising at parity with eager while speeding up text encoding and VAE decode. Tested on FLUX.2-Klein-4B (4 st；Test environment: 1",
+      "evidence_zh": "Observations: max-autotune causes 1.47-1.68x denoising regression and 30s+ warmup on Qwen. default mode keeps denoising at parity with eager while speeding up text encoding and VAE decode. Tested on FLUX.2-Klein-4B (4 st",
       "status_zh": "open",
       "synced_at": "2026-04-17T07:11:38Z",
       "fingerprint": "5b8f5625bd3d0b9a3389df1336d4de98d9919f64e62556fc943d429197de1e15"
